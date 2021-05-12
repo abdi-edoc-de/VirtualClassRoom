@@ -7,7 +7,7 @@ using VirtualClassRoom.Entities;
 
 namespace VirtualClassRoom.Services
 {
-    public class CourseRepository : ICourseRepository
+     class CourseRepository : ICourseRepository
     {
         private readonly AppDbContext _appDbContext;
 
@@ -21,19 +21,19 @@ namespace VirtualClassRoom.Services
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
-
+            var instructor = _appDbContext.Instructors.FirstOrDefault(i => i.InstructorId == instructorId);
             if (course == null)
             {
                 throw new ArgumentNullException(nameof(course));
             }
-            // always set the AuthorId to the passed-in authorId
             course.InstructorId = instructorId;
+            course.Instructor = instructor ?? throw new ArgumentNullException(nameof(instructor));
             _appDbContext.Courses.Add(course);
             _appDbContext.SaveChanges();
         }
 
   
-        public ICollection<CourseStudent> GetCourses(Guid studentId)
+        public ICollection<CourseStudent> GetEnrolledCourses(Guid studentId)
         {
             if (studentId == Guid.Empty)
             {
@@ -51,7 +51,48 @@ namespace VirtualClassRoom.Services
 
         public ICollection<CourseStudent> GetCoursesForINstructor(Guid instructorId)
         {
-            throw new NotImplementedException();
+            if (instructorId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(instructorId));
+            }
+
+            return _appDbContext.CourseStudents
+                        .Where(c => c.StudentId == instructorId)
+                        .ToList();
+        }
+        
+        public void UpdateCourse(Guid courseId)
+        {
+            if (courseId == null)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            var course = _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId);
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+
+            }
+            _appDbContext.Update(course);
+            _appDbContext.SaveChanges();
+
+        }
+
+        public void DeleteCourse(Guid courseId)
+        {
+            if (courseId == null)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            var course = _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId);
+            if (course == null)
+            {
+                throw new ArgumentNullException(nameof(course));
+
+            }
+            _appDbContext.Courses.Remove(course);
+            _appDbContext.SaveChanges();
+
         }
     }
 }

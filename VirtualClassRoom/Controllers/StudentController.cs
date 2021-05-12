@@ -33,7 +33,7 @@ namespace VirtualClassRoom.Controllers
         public IActionResult GetCoursesForStudent(Guid studentID)
         {
 
-            var courses = _CourseRepository.GetCourses(studentID);
+            var courses = _CourseRepository.GetEnrolledCourses(studentID);
             if (courses == null)
             {
                 return NotFound();

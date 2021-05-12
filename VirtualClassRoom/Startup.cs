@@ -32,6 +32,10 @@ namespace VirtualClassRoom
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IStudent, StudentRepository>();
+            services.AddScoped<IInstructorRepository, InstructorRepository>();
+
+
 
 
         }
