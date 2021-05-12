@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VirtualClassRoom.Entities
 {
-    public class ClassRoomStudent
+    public class ClassRoomStudent 
     {
         //for many to many relationship
         [ForeignKey("StudentId")]

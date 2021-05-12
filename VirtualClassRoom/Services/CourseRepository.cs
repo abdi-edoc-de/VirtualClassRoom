@@ -33,16 +33,25 @@ namespace VirtualClassRoom.Services
         }
 
   
-        public ICollection<Course> GetCourses(Guid instructorId)
+        public ICollection<CourseStudent> GetCourses(Guid studentId)
         {
-            if (instructorId == Guid.Empty)
+            if (studentId == Guid.Empty)
             {
-                throw new ArgumentNullException(nameof(instructorId));
+                throw new ArgumentNullException(nameof(studentId));
             }
 
-            return _appDbContext.Courses
-                        .Where(c => c.InstructorId == instructorId)
-                        .OrderBy(c => c.Title).ToList();
+            return _appDbContext.CourseStudents
+                        .Where(c => c.StudentId == studentId)
+                        .ToList();
+        }
+        public ICollection<Course> GetCourses()
+        {            
+            return _appDbContext.Courses.ToList();
+        }
+
+        public ICollection<CourseStudent> GetCoursesForINstructor(Guid instructorId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

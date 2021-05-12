@@ -10,7 +10,7 @@ namespace VirtualClassRoom.Entities
     public class Instructor
     {
         [Key]
-        public Guid TeacherId { get; set; }
+        public Guid InstructorId { get; set; }
         [Required]
         [MaxLength(50)]
         public String FirstName { get; set; }

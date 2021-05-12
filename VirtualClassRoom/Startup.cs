@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.DbContexts;
+using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom
 {
@@ -30,6 +31,8 @@ namespace VirtualClassRoom
             services.AddControllers();
             services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<ICourseRepository, CourseRepository>();
+
 
         }
 
