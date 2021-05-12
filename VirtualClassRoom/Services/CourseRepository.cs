@@ -63,7 +63,7 @@ namespace VirtualClassRoom.Services
         
         public void UpdateCourse(Guid courseId)
         {
-            if (courseId == null)
+            if (courseId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(courseId));
             }
@@ -80,7 +80,7 @@ namespace VirtualClassRoom.Services
 
         public void DeleteCourse(Guid courseId)
         {
-            if (courseId == null)
+            if (courseId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(courseId));
             }
