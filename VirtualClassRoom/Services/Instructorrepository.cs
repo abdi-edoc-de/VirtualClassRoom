@@ -27,7 +27,7 @@ namespace VirtualClassRoom.Services
 
         public void DeleteInstructor(Guid instructorId)
         {
-            if (instructorId == null)
+            if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
@@ -65,7 +65,7 @@ namespace VirtualClassRoom.Services
 
         public void UpdateInstructor(Guid instructorId)
         {
-            if (instructorId == null)
+            if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
