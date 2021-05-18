@@ -67,12 +67,13 @@ namespace VirtualClassRoom.Services
             {
                 throw new ArgumentNullException(nameof(courseId));
             }
-            var course = _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId);
-            if (course == null)
-            {
-                throw new ArgumentNullException(nameof(course));
+            Course course = _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId)??
+                 throw new ArgumentNullException(nameof(course)); ;
+            //if (course == null)
+            //{
+            //    throw new ArgumentNullException(nameof(course));
 
-            }
+            //}
             _appDbContext.Update(course);
             _appDbContext.SaveChanges();
 
