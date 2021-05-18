@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.DbContexts;
+using VirtualClassRoom.Entities;
 using VirtualClassRoom.Services;
 
-namespace VirtualClassRoom.Entities
+namespace VirtualClassRoom.Services
+
 {
     public class ClassRoomRepository : IClassRoomRepository
     {
@@ -18,13 +20,13 @@ namespace VirtualClassRoom.Entities
         }
         public void AddClassRoom(ClassRoom classRoom)
         {
-            if(classRoom == null)
+            if (classRoom == null)
             {
                 throw new ArgumentNullException(nameof(classRoom));
             }
             _appDbContext.ClassRooms.Add(classRoom);
             _appDbContext.SaveChanges();
-                       
+
 
         }
 
@@ -47,7 +49,7 @@ namespace VirtualClassRoom.Entities
                 throw new ArgumentNullException(nameof(virtualRoomId));
 
             }
-            ClassRoom classRoom= _appDbContext.ClassRooms.FirstOrDefault(cr => cr.ClassRoomId == virtualRoomId) ?? 
+            ClassRoom classRoom = _appDbContext.ClassRooms.FirstOrDefault(cr => cr.ClassRoomId == virtualRoomId) ??
                 throw new ArgumentNullException(nameof(classRoom));
             return classRoom;
         }

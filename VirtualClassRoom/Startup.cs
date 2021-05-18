@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.DbContexts;
+//using VirtualClassRoom.Entities;
 using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom
@@ -34,6 +35,9 @@ namespace VirtualClassRoom
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IStudent, StudentRepository>();
             services.AddScoped<IInstructorRepository, InstructorRepository>();
+            services.AddScoped<IResourceRepository, ResourceRepository>();
+            services.AddScoped<IClassRoomRepository, ClassRoomRepository>();
+
 
 
 
