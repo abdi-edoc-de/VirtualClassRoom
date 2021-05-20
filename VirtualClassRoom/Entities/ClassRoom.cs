@@ -17,6 +17,8 @@ namespace VirtualClassRoom.Entities
         [MaxLength(50)]
         public String ClassRoomName { get; set; }
 
+        // TODO: Add start datetime to the model
+
         [Required]
         public String Url { get; set; }
 
