@@ -19,12 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\Instrucotr\" />
     <Folder Include="Models\Student\" />
-    <Folder Include="Services\Course\" />
-    <Folder Include="Services\Instructor\" />
-    <Folder Include="Services\ClassRoom\" />
-    <Folder Include="Services\Resources\" />
-    <Folder Include="Services\Student\" />
   </ItemGroup>
 
 
