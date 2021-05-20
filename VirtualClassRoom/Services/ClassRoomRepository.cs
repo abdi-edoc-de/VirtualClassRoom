@@ -30,6 +30,15 @@ namespace VirtualClassRoom.Services
 
         }
 
+        public bool ClassRoomExist(Guid classRoomId)
+        {
+            if (classRoomId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(classRoomId));
+            }
+            return _appDbContext.ClassRooms.Any(s => s.ClassRoomId == classRoomId);
+        }
+
         public IEnumerable<ClassRoom> GetCourseClassRooms(Guid courseId)
         {
             if (courseId == Guid.Empty)

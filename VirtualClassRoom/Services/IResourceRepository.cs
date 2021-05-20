@@ -8,6 +8,8 @@ namespace VirtualClassRoom.Services
 {
     public interface IResourceRepository
     {
+        public bool ResourceExist(Guid resourceId);
+
         public void AddResources(Resource resource);
         public void DeleteResource(Guid resourceId);
         public Resource GetResource(Guid resourceId);

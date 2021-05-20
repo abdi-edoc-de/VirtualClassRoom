@@ -8,6 +8,8 @@ namespace VirtualClassRoom.Services
 {
     public interface ICourseRepository
     {
+        public bool CourseExist(Guid courseId);
+
         public ICollection<CourseStudent> GetCoursesForINstructor(Guid instructorId);
         public void AddCourses(Guid instructorId, Course course);
         public ICollection<Course> GetCourses();

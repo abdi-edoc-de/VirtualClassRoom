@@ -17,17 +17,9 @@ namespace VirtualClassRoom.Entities
         [Required]
         [MaxLength(50)]
         public String LastName { get; set; }
-        private string _password;
-        [NotMapped]
-        public String Password {
-            get {
-// password hashing and attribute for password field
-                return _password;
-            }
-            set { 
-                _password = value; 
-            }
-        }
+        [Required]
+        public String Password { get; set; }
+        
         [Required]
         [EmailAddress]
         public String Email { get; set; }

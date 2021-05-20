@@ -59,5 +59,14 @@ namespace VirtualClassRoom.Services
                 throw new ArgumentNullException(nameof(resources));
             return resources;
         }
+
+        public bool ResourceExist(Guid resourceId)
+        {
+            if (resourceId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(resourceId));
+            }
+            return _appDbContext.Resources.Any(s => s.ResourceId == resourceId);
+        }
     }
 }

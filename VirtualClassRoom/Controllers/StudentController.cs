@@ -1,47 +1,95 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using VirtualClassRoom.Entities;
+using VirtualClassRoom.Models;
 using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom.Controllers
 {
+    [Authorize]
     [ApiController]
-    [Route("api/Students")]
+    [Route("api/authenticate/Students")]
     public class StudentController:ControllerBase
     {
-        private readonly ICourseRepository _CourseRepository;
+        private readonly IStudentRepository _studentRepository;
+        private readonly IMapper _mapper;
+        private readonly IAccountService _accountService;
 
-        public StudentController(ICourseRepository courseRepository)
+
+        public StudentController(IStudentRepository studentRepository, IAccountService accountService,
+            IMapper mapper)
         {
-            _CourseRepository = courseRepository;
+            _studentRepository = studentRepository ??
+                throw new ArgumentNullException(nameof(studentRepository));
+            _mapper = mapper ??
+                throw new ArgumentNullException(nameof(mapper));
+            _accountService = accountService ??
+                throw new ArgumentNullException(nameof(accountService));
+
+
         }
-        [HttpGet]
-        public IActionResult GetCourses()
-        {
 
-            var courses = _CourseRepository.GetCourses();
-            if(courses == null)
+        [HttpGet(Name ="GetStudentInfo")]
+        public ActionResult<UserDto> GetStudentInfo()
+        {
+            string authHeader = Request.Headers["Authorization"];
+            string username = _accountService.Decrypt(authHeader);
+
+            Student studentFromDb = _studentRepository.GetStudentByEmail(username);
+            if (studentFromDb == null)
             {
                 return NotFound();
             }
-            return Ok(courses);
+            UserDto studentToReturn = _mapper.Map<UserDto>(studentFromDb);
+            return Ok(studentToReturn);
 
         }
-        [HttpGet("{studentID}")]
-        public IActionResult GetCoursesForStudent(Guid studentID)
+        [AllowAnonymous]
+        [HttpPost("CreateStudent")]
+        public ActionResult<UserDto> CreateStudent([FromBody]UserCreationDto student)
         {
+            Student studentEntity = _mapper.Map<Student>(student);
+            _studentRepository.AddStudent(studentEntity);
+            UserDto studentToReturn = _mapper.Map<UserDto>(studentEntity);
+            return CreatedAtRoute("GetStudentInformation", new { studentId = studentToReturn.Id },
+                studentToReturn);
+        }
 
-            var courses = _CourseRepository.GetEnrolledCourses(studentID);
-            if (courses == null)
+        [HttpGet("{studentId}",Name = "GetStudentInformation")]
+        public ActionResult<UserDto> GetStudentInformation(Guid studentID)
+        {
+            if (studentID == Guid.Empty)
             {
                 return NotFound();
             }
-            return Ok(courses);
-
-
+            Student student = _studentRepository.GetStudent(studentID);
+            if(student == null)
+            {
+                return NotFound();
+            }
+            UserDto studentToReturn = _mapper.Map<UserDto>(student);
+            return Ok(studentToReturn);
         }
+        //[HttpPost("{studentID}")]
+        //public ActionResult<StudentDto> UpdateStudent(Guid studentId,StudentCreationDto student)
+        //{
+        //    if (!_studentRepository.StudentExist(studentId))
+        //    {
+        //        return NotFound();
+        //    }
+        //    Student studentEntity = _mapper.Map<Student>(student);
+        //    _studentRepository.UpdateStudent(studentId, studentEntity);
+        //    StudentDto studentToReturn = _mapper.Map<StudentDto>(studentEntity);
+        //    return CreatedAtRoute("GetStudentInfo", new { studentId = studentToReturn.StudentId },
+        //        studentToReturn);
+        //}
+
+
 
     }
 }

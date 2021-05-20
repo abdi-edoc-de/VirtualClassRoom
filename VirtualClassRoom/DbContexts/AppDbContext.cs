@@ -26,8 +26,17 @@ namespace VirtualClassRoom.DbContexts
         {
             modelBuilder.Entity<ClassRoomStudent>()
                 .HasKey(c => new { c.ClassRoomId, c.StudentId });
+
             modelBuilder.Entity<CourseStudent>()
                .HasKey(c => new { c.CourseId, c.StudentId });
+
+            modelBuilder.Entity<Student>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<Instructor>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
 
             modelBuilder.Entity<Instructor>().HasData(
                 new Instructor()
