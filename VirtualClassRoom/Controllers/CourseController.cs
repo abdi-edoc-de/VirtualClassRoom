@@ -11,16 +11,16 @@ namespace VirtualClassRoom.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/authenticate/Students/{studentId}")]
+    [Route("api/Course")]
 
-    public class InstructorCourseController : ControllerBase
+    public class CourseController : ControllerBase
     {
         private readonly ICourseRepository _courseRepository;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
 
 
-        public InstructorCourseController(ICourseRepository courseRepository, IAccountService accountService,
+        public CourseController(ICourseRepository courseRepository, IAccountService accountService,
             IMapper mapper)
         {
             _courseRepository = courseRepository ??
@@ -32,5 +32,13 @@ namespace VirtualClassRoom.Controllers
 
 
         }
+        //[HttpGet("{courseId}")]
+        //public ActionResult GetCourse(Guid courseId,Guid studentId)
+        //{
+
+
+        //    throw new NotImplementedException();
+        //}
+
     }
 }

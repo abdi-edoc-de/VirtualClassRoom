@@ -34,13 +34,15 @@ namespace VirtualClassRoom.Controllers
 
         }
 
-        [HttpGet(Name ="GetStudentInfo")]
+        [HttpGet(Name = "GetStudentInfo")]
         public ActionResult<UserDto> GetStudentInfo()
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
-
-            Student studentFromDb = _studentRepository.GetStudentByEmail(username);
+            string[] token = username.Split(",");
+            Guid id = Guid.Parse(token[0]);
+            string role = token[1];
+            Student studentFromDb = _studentRepository.GetStudent(id);
             if (studentFromDb == null)
             {
                 return NotFound();

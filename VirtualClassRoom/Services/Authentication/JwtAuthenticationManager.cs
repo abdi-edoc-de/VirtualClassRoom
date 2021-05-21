@@ -21,15 +21,16 @@ namespace VirtualClassRoom.Services
         }
 
         public string Authenticate(string username, string role)
-        {            
+        {        
+            
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenkey = Encoding.ASCII.GetBytes(key);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, username),
-                    new Claim(ClaimTypes.Role, role)
+                    new Claim(ClaimTypes.Name, $"{username},{role}" )
+                    
 
                 }),
                 Expires = DateTime.UtcNow.AddHours(10),

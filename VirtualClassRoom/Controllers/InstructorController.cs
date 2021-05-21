@@ -39,8 +39,11 @@ namespace VirtualClassRoom.Controllers
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
+            string[] token = username.Split(",");
+            Guid id = Guid.Parse(token[0].Trim());
+            string role = token[1].Trim();
 
-            Instructor instructorFromDb = _instructorRepository.GetInstructorByEmail(username);
+            Instructor instructorFromDb = _instructorRepository.GetInstructor(id);
             if (instructorFromDb == null)
             {
                 return NotFound();
