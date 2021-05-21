@@ -15,7 +15,7 @@ namespace VirtualClassRoom.Services
         {
             this._appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext)); 
         }
-        public void AddCourses(Guid instructorId, Course course)
+        public void AddCourse(Guid instructorId, Course course)
         {
             if (instructorId == Guid.Empty)
             {
@@ -49,15 +49,15 @@ namespace VirtualClassRoom.Services
             return _appDbContext.Courses.ToList();
         }
 
-        public ICollection<CourseStudent> GetCoursesForINstructor(Guid instructorId)
+        public ICollection<Course> GetCoursesForInstructor(Guid instructorId)
         {
             if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
 
-            return _appDbContext.CourseStudents
-                        .Where(c => c.StudentId == instructorId)
+            return _appDbContext.Courses
+                        .Where(c => c.InstructorId == instructorId)
                         .ToList();
         }
         
@@ -103,6 +103,16 @@ namespace VirtualClassRoom.Services
                 throw new ArgumentNullException(nameof(courseId));
             }
             return _appDbContext.Courses.Any(s => s.CourseId == courseId);
+        }
+
+        public Course GetCourse(Guid courseId)
+        {
+            if(courseId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            return _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId);
+            
         }
     }
 }

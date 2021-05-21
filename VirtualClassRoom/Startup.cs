@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using VirtualClassRoom.DbContexts;
 //using VirtualClassRoom.Entities;
 using VirtualClassRoom.Services;
+using VirtualClassRoom.Services.CourseStudents;
 
 namespace VirtualClassRoom
 {
@@ -66,7 +67,7 @@ namespace VirtualClassRoom
             });
             services.AddSingleton<IJwtAuthenticationManager>(new JWTAuthenticationManager(tokenKey));
             services.AddScoped<IAccountService, AccountService>();
-
+            services.AddScoped<ICourseStudentRepository, CourseStudentRepository>();
 
 
 

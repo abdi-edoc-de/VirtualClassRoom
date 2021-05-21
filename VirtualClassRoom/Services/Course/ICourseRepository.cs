@@ -10,11 +10,13 @@ namespace VirtualClassRoom.Services
     {
         public bool CourseExist(Guid courseId);
 
-        public ICollection<CourseStudent> GetCoursesForINstructor(Guid instructorId);
-        public void AddCourses(Guid instructorId, Course course);
+        public ICollection<Course> GetCoursesForInstructor(Guid instructorId);
+        public void AddCourse(Guid instructorId, Course course);
         public ICollection<Course> GetCourses();
         public ICollection<CourseStudent> GetEnrolledCourses(Guid studentId);
         public void DeleteCourse(Guid courseId);
         public void UpdateCourse(Guid courseId);
+        public Course GetCourse(Guid courseId);
+
     }
 }

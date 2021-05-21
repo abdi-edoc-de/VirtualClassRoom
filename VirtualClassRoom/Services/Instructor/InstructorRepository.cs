@@ -43,10 +43,9 @@ namespace VirtualClassRoom.Services
             }
             email = email.Trim();
             password = password.Trim();
-            Instructor instructor = _appDbContext.Instructors.FirstOrDefault(s => s.Email == email &&
-                                VerifyPassword(password,s.Password)) ??
-                throw new ArgumentNullException(nameof(instructor));
+            Instructor instructor = _appDbContext.Instructors.FirstOrDefault(s => s.Email == email && s.Password==password );
             return instructor;
+            
 
 
         }

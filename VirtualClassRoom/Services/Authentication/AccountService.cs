@@ -27,9 +27,13 @@ namespace VirtualClassRoom.Services
         public IEnumerable<string> Authenticate(string username, string password)
         {
             Student student = _studentRepository.FindStudent(username, password);
+            Guid id = Guid.Parse("5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
             string role = "Student";
-            Guid id = student.StudentId;
-            if (student==null)
+            if (student != null)
+            {
+                id = student.StudentId;
+            }
+            if (student == null)
             {
                 role = "Instructor";
                 Instructor instructor = _instructprRepository.FindInstructor(username, password);
