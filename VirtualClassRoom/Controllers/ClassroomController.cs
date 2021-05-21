@@ -6,8 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.Services;
 using VirtualClassRoom.Entities;
+using Microsoft.AspNetCore.Authorization;
+
 namespace VirtualClassRoom.Controllers
 {
+    [Authorize]
     [Route("api/Courses/{CourseID}/Classrooms")]
     [ApiController]
     public class ClassroomController : ControllerBase

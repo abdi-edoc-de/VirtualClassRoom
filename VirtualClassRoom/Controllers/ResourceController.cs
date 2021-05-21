@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom.Controllers
 {
+    [Authorize]
     [Route("api/Courses/{CourseID}/Resources")]
     [Consumes("application/octet-stream", "multipart/form-data")]
     [ApiController]

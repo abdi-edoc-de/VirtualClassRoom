@@ -24,7 +24,6 @@ namespace VirtualClassRoom.Services
             _appDbContext.Instructors.Add(instructor);
             _appDbContext.SaveChanges();
         }
-
         public void DeleteInstructor(Guid instructorId)
         {
             if (instructorId == Guid.Empty)
