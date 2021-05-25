@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.Entities;
 using VirtualClassRoom.Models;
+using VirtualClassRoom.Models.Users;
 using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom.Controllers
@@ -78,19 +80,29 @@ namespace VirtualClassRoom.Controllers
             UserDto studentToReturn = _mapper.Map<UserDto>(student);
             return Ok(studentToReturn);
         }
-        //[HttpPost("{studentID}")]
-        //public ActionResult<StudentDto> UpdateStudent(Guid studentId,StudentCreationDto student)
-        //{
-        //    if (!_studentRepository.StudentExist(studentId))
-        //    {
-        //        return NotFound();
-        //    }
-        //    Student studentEntity = _mapper.Map<Student>(student);
-        //    _studentRepository.UpdateStudent(studentId, studentEntity);
-        //    StudentDto studentToReturn = _mapper.Map<StudentDto>(studentEntity);
-        //    return CreatedAtRoute("GetStudentInfo", new { studentId = studentToReturn.StudentId },
-        //        studentToReturn);
-        //}
+        [HttpPatch("{studentID}")]
+        public ActionResult UpdateStudent(Guid studentId,
+                                        JsonPatchDocument<UserUpdateDto> patchStudent)
+        {
+            if (!_studentRepository.StudentExist(studentId))
+            {
+                return NotFound();
+            }
+            Student studentFromDb = _studentRepository.GetStudent(studentId);
+            if (studentFromDb == null)
+            {
+                return NotFound();
+            }
+            var studentToPatch = _mapper.Map<UserUpdateDto>(studentFromDb);
+            patchStudent.ApplyTo(studentToPatch);
+            _mapper.Map(studentToPatch, studentFromDb);
+
+
+            _studentRepository.UpdateStudent(studentId, studentFromDb);
+            
+            UserDto studentToReturn = _mapper.Map<UserDto>(studentFromDb);
+            return Ok(studentToReturn);
+        }
 
 
 

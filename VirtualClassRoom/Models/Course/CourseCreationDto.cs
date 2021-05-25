@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace VirtualClassRoom.Models.Course
 {
-    public class CourseDto
+    public class CourseCreationDto
     {
-        public Guid CourseId { get; set; }
         public String Title { get; set; }
         public String Description { get; set; }
         public Guid InstructorId { get; set; }

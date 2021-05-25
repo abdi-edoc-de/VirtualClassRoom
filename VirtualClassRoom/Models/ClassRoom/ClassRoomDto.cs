@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace VirtualClassRoom.Entities
 {
-    public class ClassRoomDTO
+    public class ClassRoomDto
     {
         public String ClassRoomName { get; set; }
     }

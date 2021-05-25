@@ -33,7 +33,7 @@ namespace VirtualClassRoom.Controllers
             return Ok(classroom);
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetVirtualClassroomsForCourse")]
         public IActionResult GetVirtualClassroomsForCourse(Guid CourseID)
         {
             var classrooms = _ClassroomRepository.GetCourseClassRooms(CourseID);
@@ -42,7 +42,7 @@ namespace VirtualClassRoom.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        public IActionResult PostVirtualClassroom(Guid CourseID, [FromBody] ClassRoomDTO classRoomDTO)
+        public ActionResult PostVirtualClassroom(Guid CourseID, [FromBody] ClassRoomDto classRoomDTO)
         {
             ClassRoom classRoom = new ClassRoom
             {
@@ -51,7 +51,8 @@ namespace VirtualClassRoom.Controllers
                 ClassRoomName = classRoomDTO.ClassRoomName
             };
             _ClassroomRepository.AddClassRoom(classRoom);
-            return Ok();// CreatedAtAction("GetVirtualClassroom", new { id = classRoom.ClassRoomId }, classRoom);
+            return Ok();
+            //return CreatedAtAction("GetVirtualClassroom", new { id = classRoom.ClassRoomId }, classRoom);
         }
 
         [HttpGet("{ClassroomID}/join")]
@@ -62,7 +63,7 @@ namespace VirtualClassRoom.Controllers
         }
 
         [HttpPatch("{ClassroomID}")]
-        public IActionResult UpdateVirtualClassroom(Guid ClassroomID, ClassRoomDTO classRoom)
+        public IActionResult UpdateVirtualClassroom(Guid ClassroomID, ClassRoomDto classRoom)
         {
             var classroom = _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
             if (classroom == null)

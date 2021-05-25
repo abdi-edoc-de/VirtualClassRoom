@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using VirtualClassRoom.Entities;
 using VirtualClassRoom.Models;
 using VirtualClassRoom.Models.User;
+using VirtualClassRoom.Models.Users;
 
 namespace VirtualClassRoom.Profiles
 {
@@ -65,6 +66,12 @@ namespace VirtualClassRoom.Profiles
                 .ForMember(
                 dest => dest.Id,
                 opt => opt.MapFrom(src => src.InstructorId));
+            CreateMap<UserUpdateDto, Student>();
+            CreateMap<Student, UserUpdateDto>();
+            CreateMap<UserUpdateDto, Instructor>();
+            CreateMap<Instructor, UserUpdateDto>();
+
+
         }
     }
 }

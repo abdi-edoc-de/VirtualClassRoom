@@ -9,5 +9,6 @@ namespace VirtualClassRoom.Services.CourseStudents
     public interface ICourseStudentRepository
     {
         public void AddStudentInCourse(CourseStudent courseStudent);
+        public IEnumerable<Student> GetStudents(Guid courseId);
     }
 }

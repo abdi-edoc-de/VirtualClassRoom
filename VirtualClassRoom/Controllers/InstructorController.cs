@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.Entities;
 using VirtualClassRoom.Models;
+using VirtualClassRoom.Models.Users;
 using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom.Controllers
@@ -76,6 +78,29 @@ namespace VirtualClassRoom.Controllers
             }
             UserDto instrucorToReturn = _mapper.Map<UserDto>(instructor);
             return Ok(instrucorToReturn);
+        }
+        [HttpPatch("{instructorId}")]
+        public ActionResult UpdateStudent(Guid instructorId,
+                                        JsonPatchDocument<UserUpdateDto> patchInstructor)
+        {
+            if (!_instructorRepository.InstrucotrExist(instructorId))
+            {
+                return NotFound();
+            }
+            Instructor instructorFromDb = _instructorRepository.GetInstructor(instructorId);
+            if (instructorFromDb == null)
+            {
+                return NotFound();
+            }
+            var instructorToPatch = _mapper.Map<UserUpdateDto>(instructorFromDb);
+            patchInstructor.ApplyTo(instructorToPatch);
+            _mapper.Map(instructorToPatch, instructorFromDb);
+
+
+            _instructorRepository.UpdateInstructor( instructorFromDb);
+
+            UserDto instructorToReturn = _mapper.Map<UserDto>(instructorFromDb);
+            return Ok(instructorToReturn);
         }
 
     }

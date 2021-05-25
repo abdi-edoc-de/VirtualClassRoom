@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,10 +71,12 @@ namespace VirtualClassRoom.Services
             {
                 throw new ArgumentNullException(nameof(studentId));
             }
-            Student studentFromDb = _appDbContext.Students.FirstOrDefault(c => c.StudentId == studentId)??
-                throw new ArgumentNullException(nameof(studentFromDb));
-            student.StudentId = studentFromDb.StudentId;
-            student.Password = studentFromDb.Password;
+            //Student studentFromDb = _appDbContext.Students.FirstOrDefault(c => c.StudentId == studentId) ??
+            //    throw new ArgumentNullException(nameof(studentFromDb));
+            //student.StudentId = studentFromDb.StudentId;
+            //student.Password = studentFromDb.Password;
+            //_appDbContext.Entry(student).State = EntityState.Modified;
+
             _appDbContext.Update(student);
             _appDbContext.SaveChanges();
         }

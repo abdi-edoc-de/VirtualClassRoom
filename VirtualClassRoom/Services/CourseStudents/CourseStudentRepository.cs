@@ -26,5 +26,23 @@ namespace VirtualClassRoom.Services.CourseStudents
             _appDbContext.SaveChanges();
             
         }
+
+        public IEnumerable<Student> GetStudents(Guid courseId)
+        {
+            if (courseId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            List<CourseStudent> courseStudent = _appDbContext.CourseStudents
+                .Where(c=>c.CourseId==courseId).ToList();
+            List<Student> students=new List<Student>();
+            foreach(CourseStudent i in courseStudent)
+            {
+                students.Add(
+                    _appDbContext.Students.First(c=>c.StudentId==i.StudentId));
+            }
+            return students;
+
+        }
     }
 }

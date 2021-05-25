@@ -75,13 +75,9 @@ namespace VirtualClassRoom.Services
             return _appDbContext.Instructors.Any(s => s.InstructorId == instructorId);
         }
 
-        public void UpdateInstructor(Guid instructorId)
+        public void UpdateInstructor(Instructor instructor)
         {
-            if (instructorId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(instructorId));
-            }
-            Instructor instructor = _appDbContext.Instructors.FirstOrDefault(c => c.InstructorId == instructorId);
+            
             if (instructor == null)
             {
                 throw new ArgumentNullException(nameof(instructor));

@@ -14,8 +14,11 @@ namespace VirtualClassRoom.Profiles
     {
         public CourseProfile()
         {
-            CreateMap<Course, CourseDto>();
+            CreateMap<Course, CourseCreationDto>();
+            CreateMap<CourseCreationDto, Course>();
+
             CreateMap<CourseStudentCreationDto, CourseStudent>();
+            CreateMap<Course, CourseDto>();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace VirtualClassRoom.Services
 
         public Instructor FindInstructor(string email, string password);
         public Instructor GetInstructor(Guid instructorId);
-        public void UpdateInstructor(Guid instructorId);
+        public void UpdateInstructor(Instructor instructor);
         public void AddInstructor(Instructor instructor);
         public void DeleteInstructor(Guid instructorId);
         public Instructor GetInstructorByEmail(string email);

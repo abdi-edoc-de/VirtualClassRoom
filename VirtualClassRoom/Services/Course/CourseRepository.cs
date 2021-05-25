@@ -61,19 +61,12 @@ namespace VirtualClassRoom.Services
                         .ToList();
         }
         
-        public void UpdateCourse(Guid courseId)
+        public void UpdateCourse(Course course)
         {
-            if (courseId == Guid.Empty)
+            if (course == null)
             {
-                throw new ArgumentNullException(nameof(courseId));
+                throw new ArgumentNullException(nameof(course));
             }
-            Course course = _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId)??
-                 throw new ArgumentNullException(nameof(course)); ;
-            //if (course == null)
-            //{
-            //    throw new ArgumentNullException(nameof(course));
-
-            //}
             _appDbContext.Update(course);
             _appDbContext.SaveChanges();
 

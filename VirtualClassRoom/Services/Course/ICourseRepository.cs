@@ -15,7 +15,7 @@ namespace VirtualClassRoom.Services
         public ICollection<Course> GetCourses();
         public ICollection<CourseStudent> GetEnrolledCourses(Guid studentId);
         public void DeleteCourse(Guid courseId);
-        public void UpdateCourse(Guid courseId);
+        public void UpdateCourse(Course course);
         public Course GetCourse(Guid courseId);
 
     }
