@@ -10,5 +10,6 @@ namespace VirtualClassRoom.Services.CourseStudents
     {
         public void AddStudentInCourse(CourseStudent courseStudent);
         public IEnumerable<Student> GetStudents(Guid courseId);
+        public IEnumerable<Student> GetStudents(IEnumerable<Guid> studentIds);
     }
 }

@@ -16,7 +16,7 @@ namespace VirtualClassRoom.Services
         public void DeleteStudent(Guid studentId);
         public bool StudentExist(Guid studentId);
         public Student GetStudentByEmail(string email);
-
+       
 
     }
 }

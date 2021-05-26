@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.Entities;
+using VirtualClassRoom.Helpers;
 using VirtualClassRoom.Models;
 using VirtualClassRoom.Models.Course;
 using VirtualClassRoom.Services;
@@ -84,7 +86,7 @@ namespace VirtualClassRoom.Controllers
 
         }
         [HttpPost("{courseId}")]
-        public ActionResult AddStudent(Guid courseId,IEnumerable<CourseStudentCreationDto> courseStudents)
+        public ActionResult AddStudents(Guid courseId,IEnumerable<CourseStudentCreationDto> courseStudents)
         {
             var courseStudentsFromDb = _mapper.Map<IEnumerable<CourseStudent>>(courseStudents);
 
@@ -92,8 +94,31 @@ namespace VirtualClassRoom.Controllers
             {
                 _courseStudentRepository.AddStudentInCourse(courseStudent);
             }
-            return Ok();
+            var studentIds = courseStudentsFromDb
+                .Select(s => s.StudentId);
+            var studentToReturn = _courseStudentRepository.GetStudents(studentIds);
+            var idsAsString = string.Join(",",studentIds);
+            return CreatedAtRoute("GetStudents",new { courseId,ids= idsAsString },
+                                    studentToReturn);
 
+        }
+        [HttpGet("courseId/({ids})", Name = "GetStudents")]
+        public ActionResult GetStudents(Guid courseId,
+            [FromRoute][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
+        {
+            if (ids == null)
+            {
+                return BadRequest();
+            }
+            var studentsFromDb = _courseStudentRepository.GetStudents(ids);
+
+            if(ids.Count() != studentsFromDb.Count())
+            {
+                return NotFound();
+            }
+            var studentsToReturn = _mapper
+                .Map<IEnumerable<UserDto>>(studentsFromDb);
+            return Ok(studentsToReturn);
         }
         [HttpGet("{courseId}/Students")]
         public ActionResult<IEnumerable<UserDto>> GetStudents(Guid courseId)
@@ -110,7 +135,8 @@ namespace VirtualClassRoom.Controllers
             {
                 return NotFound();
             }
-            var studentsToReturn = _mapper.Map<UserDto>(students);
+            var studentsToReturn = _mapper
+                .Map<IEnumerable<UserDto>>(students);
 
             return Ok(studentsToReturn);
 

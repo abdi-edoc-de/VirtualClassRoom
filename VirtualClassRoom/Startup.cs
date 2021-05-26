@@ -39,6 +39,10 @@ namespace VirtualClassRoom
         public void ConfigureServices(IServiceCollection services)
         {
 
+            services.AddSwaggerGen();
+
+
+
             services.AddControllers(setUpAction =>
             {
                 setUpAction.ReturnHttpNotAcceptable = true;
@@ -138,7 +142,7 @@ namespace VirtualClassRoom
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ICourseStudentRepository, CourseStudentRepository>();
 
-
+            
 
 
         }
@@ -146,6 +150,12 @@ namespace VirtualClassRoom
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseSwagger();
+
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Swagger Demo API");
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -157,8 +167,9 @@ namespace VirtualClassRoom
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers(); 
             });
+            
         }
     }
 }

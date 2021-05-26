@@ -44,5 +44,13 @@ namespace VirtualClassRoom.Services.CourseStudents
             return students;
 
         }
+        public IEnumerable<Student> GetStudents(IEnumerable<Guid> studentIds)
+        {
+            if (studentIds == null)
+            {
+                throw new ArgumentNullException(nameof(studentIds));
+            }
+            return _appDbContext.Students.Where(s => studentIds.Contains(s.StudentId)).ToList();
+        }
     }
 }

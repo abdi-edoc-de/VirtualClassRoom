@@ -36,6 +36,8 @@ namespace VirtualClassRoom.Controllers
 
         }
 
+
+
         [HttpGet(Name = "GetStudentInfo")]
         public ActionResult<UserDto> GetStudentInfo()
         {
@@ -103,6 +105,7 @@ namespace VirtualClassRoom.Controllers
             UserDto studentToReturn = _mapper.Map<UserDto>(studentFromDb);
             return Ok(studentToReturn);
         }
+      
 
 
 
