@@ -22,6 +22,7 @@ using VirtualClassRoom.DbContexts;
 //using VirtualClassRoom.Entities;
 using VirtualClassRoom.Services;
 using VirtualClassRoom.Services.CourseStudents;
+using VirtualClassRoom.SignalRTC;
 
 namespace VirtualClassRoom
 {
@@ -145,7 +146,20 @@ namespace VirtualClassRoom
             
 
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                    builder => builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
+            services.AddSignalR();
+
         }
+
+        readonly string MyAllowSpecificOrigins = "AllowOrigins";
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -161,13 +175,22 @@ namespace VirtualClassRoom
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseCors(MyAllowSpecificOrigins);
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers(); 
+                endpoints.MapControllers();
+
+                endpoints.MapHub<SignalRtcHub>("/signalrtc");
+            });
+
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Hello World!");
             });
             
         }
