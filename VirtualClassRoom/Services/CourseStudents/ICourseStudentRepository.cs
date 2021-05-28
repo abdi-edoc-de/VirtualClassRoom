@@ -8,8 +8,8 @@ namespace VirtualClassRoom.Services.CourseStudents
 {
     public interface ICourseStudentRepository
     {
-        public void AddStudentInCourse(CourseStudent courseStudent);
-        public IEnumerable<Student> GetStudents(Guid courseId);
-        public IEnumerable<Student> GetStudents(IEnumerable<Guid> studentIds);
+        public  Task<CourseStudent> AddStudentInCourse(CourseStudent courseStudent);
+        public Task<IEnumerable<Student>> GetStudents(Guid courseId);
+        public Task<IEnumerable<Student>> GetStudents(IEnumerable<Guid> studentIds);
     }
 }

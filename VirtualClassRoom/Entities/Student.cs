@@ -28,6 +28,9 @@ namespace VirtualClassRoom.Entities
 
         public ICollection<ClassRoomStudent> ClassRoomStudents { get; set; } = new List<ClassRoomStudent>();
 
-
+        public static implicit operator Student(Task<Student> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

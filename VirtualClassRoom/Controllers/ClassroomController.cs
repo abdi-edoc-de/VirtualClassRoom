@@ -20,31 +20,31 @@ namespace VirtualClassRoom.Controllers
         private readonly IMapper _mapper;
         private readonly IClassRoomRepository _ClassroomRepository;
 
-        public ClassroomController(IClassRoomRepository classRoomRepository,IMapper mapper)
+        public ClassroomController(IClassRoomRepository classRoomRepository, IMapper mapper)
         {
             _mapper = mapper;
             _ClassroomRepository = classRoomRepository;
         }
 
-        [HttpGet("{ClassroomID}",Name ="GetClassRoom")]
-        public ActionResult<ClassRoomDto> GetVirtualClassroom(Guid ClassroomID)
+        [HttpGet("{ClassroomID}", Name = "GetClassRoom")]
+        public async Task<ActionResult<ClassRoomDto>> GetVirtualClassroom(Guid ClassroomID)
         {
-            var classroom = _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
+            var classroom = await _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
             if (classroom == null)
             {
                 return NotFound();
             }
             ClassRoomDto classRoomToReturn = _mapper.Map<ClassRoomDto>(classroom);
-            
+
             return Ok(classRoomToReturn);
         }
 
         [HttpGet(Name = "GetVirtualClassroomsForCourse")]
-        public ActionResult< IEnumerable<ClassRoomDto>> GetVirtualClassroomsForCourse(Guid courseId)
+        public async Task<ActionResult<IEnumerable<ClassRoomDto>>> GetVirtualClassroomsForCourse(Guid courseId)
         {
 
-            var classrooms = _ClassroomRepository.GetCourseClassRooms(courseId);
-            if(classrooms == null)
+            var classrooms = await _ClassroomRepository.GetCourseClassRooms(courseId);
+            if (classrooms == null)
             {
                 return NotFound();
 
@@ -55,7 +55,7 @@ namespace VirtualClassRoom.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        public ActionResult<ClassRoomDto> PostVirtualClassroom(Guid courseId, [FromBody] ClassRoomUpdateDto classRoomDTO)
+        public async Task<ActionResult<ClassRoomDto>> PostVirtualClassroom(Guid courseId, [FromBody] ClassRoomUpdateDto classRoomDTO)
         {
             ClassRoom classRoom = new ClassRoom
             {
@@ -63,30 +63,30 @@ namespace VirtualClassRoom.Controllers
                 CourseId = courseId,
                 ClassRoomName = classRoomDTO.ClassRoomName
             };
-            _ClassroomRepository.AddClassRoom(classRoom);
+            var _ = await _ClassroomRepository.AddClassRoom(classRoom);
             var classRoomToReturn = _mapper.Map<ClassRoomDto>(classRoom);
-            return CreatedAtAction("GetClassRoom", 
-                             new { CourseId= courseId, ClassRoomId = classRoomToReturn.ClassRoomId },
+            return CreatedAtAction("GetClassRoom",
+                             new { CourseId = courseId, ClassRoomId = classRoomToReturn.ClassRoomId },
                              classRoomToReturn);
         }
 
         [HttpGet("{ClassroomID}/join")]
-        public IActionResult JoinVirtualClassroom(Guid ClassroomID)
+        public async Task<ActionResult> JoinVirtualClassroom(Guid ClassroomID)
         {
             // TODO: Implement Join Classroom feature
             return Ok(ClassroomID);
         }
 
         [HttpPatch("{ClassroomID}")]
-        public IActionResult UpdateVirtualClassroom(Guid ClassroomID, ClassRoomDto classRoom)
+        public async Task<ActionResult> UpdateVirtualClassroom(Guid ClassroomID, ClassRoomDto classRoom)
         {
-            var classroom = _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
+            var classroom = await _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
             if (classroom == null)
             {
                 return NotFound();
             }
             classroom.ClassRoomName = classRoom.ClassRoomName;
-            _ClassroomRepository.UpdateVirualClassRoom(ClassroomID, classroom);
+            var _ = await _ClassroomRepository.UpdateVirualClassRoom(ClassroomID, classroom);
             return Accepted();
         }
     }

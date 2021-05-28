@@ -30,7 +30,7 @@ namespace VirtualClassRoom.Controllers
 
 
         public CourseController(ICourseRepository courseRepository, IAccountService accountService,
-            IMapper mapper,ICourseStudentRepository courseStudentRepository)
+            IMapper mapper, ICourseStudentRepository courseStudentRepository)
         {
             _courseRepository = courseRepository ??
                 throw new ArgumentNullException(nameof(courseRepository));
@@ -44,7 +44,7 @@ namespace VirtualClassRoom.Controllers
 
         }
         [HttpPost]
-        public ActionResult AddCourse([FromBody] CourseCreationDto course)
+        public async Task<ActionResult<CourseDto>> AddCourse([FromBody]CourseCreationDto course)
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
@@ -58,17 +58,17 @@ namespace VirtualClassRoom.Controllers
             }
             Course courseToDb = _mapper.Map<Course>(course);
 
-            _courseRepository.AddCourse(id,courseToDb);
-            CourseDto courseToReturn = _mapper.Map<CourseDto>(course);
+            var temp = await _courseRepository.AddCourse(id, courseToDb);
+            CourseDto courseToReturn = _mapper.Map<CourseDto>(temp);
             courseToReturn.InstructorId = id;
             return CreatedAtRoute("GetCourse",
-                new { id = courseToReturn.CourseId },courseToReturn);
+                new { courseId = courseToReturn.CourseId }, courseToReturn);
 
         }
 
 
-        [HttpGet("{courseId}",Name = "GetCourse")]
-        public ActionResult<CourseDto> GetCourse(Guid courseId)
+        [HttpGet("{courseId}", Name = "GetCourse")]
+        public async Task<ActionResult<CourseDto>> GetCourse(Guid courseId)
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
@@ -80,39 +80,40 @@ namespace VirtualClassRoom.Controllers
             {
                 return NotFound();
             }
-            Course course = _courseRepository.GetCourse(courseId);
+            Course course = await _courseRepository.GetCourse(courseId);
             CourseDto courseToReturn = _mapper.Map<CourseDto>(course);
             return Ok(courseToReturn);
 
         }
         [HttpPost("{courseId}")]
-        public ActionResult AddStudents(Guid courseId,IEnumerable<CourseStudentCreationDto> courseStudents)
+        public async Task<ActionResult<IEnumerable<UserDto>>> AddStudents(Guid courseId, IEnumerable<CourseStudentCreationDto> courseStudents)
         {
             var courseStudentsFromDb = _mapper.Map<IEnumerable<CourseStudent>>(courseStudents);
-
-            foreach(var courseStudent in courseStudentsFromDb)
+            CourseStudent _;
+            foreach (var courseStudent in courseStudentsFromDb)
             {
-                _courseStudentRepository.AddStudentInCourse(courseStudent);
+                _ = await _courseStudentRepository.AddStudentInCourse(courseStudent);
             }
             var studentIds = courseStudentsFromDb
                 .Select(s => s.StudentId);
-            var studentToReturn = _courseStudentRepository.GetStudents(studentIds);
-            var idsAsString = string.Join(",",studentIds);
-            return CreatedAtRoute("GetStudents",new { courseId,ids= idsAsString },
+            var studentFromDb = await _courseStudentRepository.GetStudents(studentIds);
+            var studentToReturn = _mapper.Map<IEnumerable<UserDto>>(studentFromDb);
+            var idsAsString = string.Join(",", studentIds);
+            return CreatedAtRoute("GetStudents", new { courseId, ids = idsAsString },
                                     studentToReturn);
 
         }
         [HttpGet("courseId/({ids})", Name = "GetStudents")]
-        public ActionResult GetStudents(Guid courseId,
+        public async Task<ActionResult<UserDto>> GetStudents(Guid courseId,
             [FromRoute][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
         {
             if (ids == null)
             {
                 return BadRequest();
             }
-            var studentsFromDb = _courseStudentRepository.GetStudents(ids);
+            var studentsFromDb = await _courseStudentRepository.GetStudents(ids);
 
-            if(ids.Count() != studentsFromDb.Count())
+            if (ids.Count() != studentsFromDb.Count())
             {
                 return NotFound();
             }
@@ -121,7 +122,7 @@ namespace VirtualClassRoom.Controllers
             return Ok(studentsToReturn);
         }
         [HttpGet("{courseId}/Students")]
-        public ActionResult<IEnumerable<UserDto>> GetStudents(Guid courseId)
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetStudents(Guid courseId)
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
@@ -130,7 +131,7 @@ namespace VirtualClassRoom.Controllers
             string role = token[1];
 
 
-            var students = _courseStudentRepository.GetStudents(courseId);
+            var students = await _courseStudentRepository.GetStudents(courseId);
             if (students == null)
             {
                 return NotFound();
@@ -141,8 +142,8 @@ namespace VirtualClassRoom.Controllers
             return Ok(studentsToReturn);
 
         }
-        [HttpPatch("")]
-        public ActionResult UpdateCourse(Guid courseId,JsonPatchDocument<CourseCreationDto> patchCourse)
+        [HttpPatch]
+        public async Task<ActionResult> UpdateCourse(Guid courseId, JsonPatchDocument<CourseCreationDto> patchCourse)
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
@@ -154,11 +155,11 @@ namespace VirtualClassRoom.Controllers
             {
                 return NotFound();
             }
-            if (!_courseRepository.CourseExist(courseId))
+            if (!await _courseRepository.CourseExist(courseId))
             {
                 return NotFound();
             }
-            Course courseFromDb = _courseRepository.GetCourse(courseId);
+            Course courseFromDb = await _courseRepository.GetCourse(courseId);
             if (courseFromDb == null)
             {
                 return NotFound();
@@ -166,8 +167,52 @@ namespace VirtualClassRoom.Controllers
             var courseToPathc = _mapper.Map<CourseCreationDto>(courseFromDb);
             patchCourse.ApplyTo(courseToPathc);
             _mapper.Map(courseToPathc, courseFromDb);
-            _courseRepository.UpdateCourse(courseFromDb);
+            var _ = await _courseRepository.UpdateCourse(courseFromDb);
             return Ok(courseFromDb);
+        }
+        [HttpGet("studentCourses")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetStudentsEnrolledCourses()
+        {
+            string authHeader = Request.Headers["Authorization"];
+            string username = _accountService.Decrypt(authHeader);
+            string[] token = username.Split(",");
+            Guid id = Guid.Parse(token[0]);
+            string role = token[1];
+            if (role != "Student")
+            {
+                return NotFound();
+            }
+            var courses = await _courseRepository.GetEnrolledCourses(id);
+            if (courses == null)
+            {
+                return NotFound();
+
+            }
+            var coursesToReturn = _mapper.Map<IEnumerable< CourseDto>>(courses);
+            
+            return Ok(coursesToReturn);
+        }
+        [HttpGet("instructorCourses")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetInstructorscourse()
+        {
+            string authHeader = Request.Headers["Authorization"];
+            string username = _accountService.Decrypt(authHeader);
+            string[] token = username.Split(",");
+            Guid id = Guid.Parse(token[0]);
+            string role = token[1];
+            if (role != "Instructor")
+            {
+                return NotFound();
+            }
+            var courses = await _courseRepository.GetCoursesForInstructor(id);
+            if (courses.Count() == 0)
+            {
+                return NotFound();
+
+            }
+            var coursesToReturn = _mapper.Map<IEnumerable<CourseDto>>(courses);
+
+            return Ok(coursesToReturn);
         }
 
 

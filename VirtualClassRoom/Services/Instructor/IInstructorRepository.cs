@@ -8,14 +8,14 @@ namespace VirtualClassRoom.Services
 {
     public interface IInstructorRepository
     {
-        public bool InstrucotrExist(Guid instructorId);
+        public Task<bool> InstrucotrExist(Guid instructorId);
 
-        public Instructor FindInstructor(string email, string password);
-        public Instructor GetInstructor(Guid instructorId);
-        public void UpdateInstructor(Instructor instructor);
-        public void AddInstructor(Instructor instructor);
-        public void DeleteInstructor(Guid instructorId);
-        public Instructor GetInstructorByEmail(string email);
+        public Task<Instructor> FindInstructor(string email, string password);
+        public Task<Instructor> GetInstructor(Guid instructorId);
+        public Task<Instructor> UpdateInstructor(Instructor instructor);
+        public Task<Instructor> AddInstructor(Instructor instructor);
+        public Task<Instructor> DeleteInstructor(Guid instructorId);
+        public Task<Instructor> GetInstructorByEmail(string email);
 
 
     }

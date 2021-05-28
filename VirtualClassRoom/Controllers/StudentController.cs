@@ -16,7 +16,7 @@ namespace VirtualClassRoom.Controllers
     [Authorize]
     [ApiController]
     [Route("api/authenticate/Students")]
-    public class StudentController:ControllerBase
+    public class StudentController : ControllerBase
     {
         private readonly IStudentRepository _studentRepository;
         private readonly IMapper _mapper;
@@ -39,7 +39,7 @@ namespace VirtualClassRoom.Controllers
 
 
         [HttpGet(Name = "GetStudentInfo")]
-        public ActionResult<UserDto> GetStudentInfo()
+        public async Task<ActionResult<UserDto>> GetStudentInfo()
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
@@ -47,7 +47,7 @@ namespace VirtualClassRoom.Controllers
             Guid id = Guid.Parse(token[0].Trim());
             string role = token[1].Trim();
 
-            Student studentFromDb = _studentRepository.GetStudent(id);
+            Student studentFromDb = await _studentRepository.GetStudent(id);
             if (studentFromDb == null)
             {
                 return NotFound();
@@ -58,24 +58,24 @@ namespace VirtualClassRoom.Controllers
         }
         [AllowAnonymous]
         [HttpPost("CreateStudent")]
-        public ActionResult<UserDto> CreateStudent([FromBody]UserCreationDto student)
+        public async Task<ActionResult<UserDto>> CreateStudent([FromBody] UserCreationDto student)
         {
             Student studentEntity = _mapper.Map<Student>(student);
-            _studentRepository.AddStudent(studentEntity);
+            var _ = await _studentRepository.AddStudent(studentEntity);
             UserDto studentToReturn = _mapper.Map<UserDto>(studentEntity);
             return CreatedAtRoute("GetStudentInformation", new { studentId = studentToReturn.Id },
                 studentToReturn);
         }
 
-        [HttpGet("{studentId}",Name = "GetStudentInformation")]
-        public ActionResult<UserDto> GetStudentInformation(Guid studentID)
+        [HttpGet("{studentId}", Name = "GetStudentInformation")]
+        public async Task<ActionResult<UserDto>> GetStudentInformation(Guid studentID)
         {
             if (studentID == Guid.Empty)
             {
                 return NotFound();
             }
-            Student student = _studentRepository.GetStudent(studentID);
-            if(student == null)
+            Student student = await _studentRepository.GetStudent(studentID);
+            if (student == null)
             {
                 return NotFound();
             }
@@ -83,14 +83,14 @@ namespace VirtualClassRoom.Controllers
             return Ok(studentToReturn);
         }
         [HttpPatch("{studentID}")]
-        public ActionResult UpdateStudent(Guid studentId,
+        public async Task<ActionResult> UpdateStudent(Guid studentId,
                                         JsonPatchDocument<UserUpdateDto> patchStudent)
         {
-            if (!_studentRepository.StudentExist(studentId))
+            if (!(await _studentRepository.StudentExist(studentId)))
             {
                 return NotFound();
             }
-            Student studentFromDb = _studentRepository.GetStudent(studentId);
+            Student studentFromDb = await _studentRepository.GetStudent(studentId);
             if (studentFromDb == null)
             {
                 return NotFound();
@@ -100,13 +100,13 @@ namespace VirtualClassRoom.Controllers
             _mapper.Map(studentToPatch, studentFromDb);
 
 
-            _studentRepository.UpdateStudent(studentId, studentFromDb);
-            
+            var _ = await _studentRepository.UpdateStudent(studentId, studentFromDb);
+
             UserDto studentToReturn = _mapper.Map<UserDto>(studentFromDb);
             return Ok(studentToReturn);
         }
-      
 
+        
 
 
     }

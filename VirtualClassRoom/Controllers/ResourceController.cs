@@ -19,11 +19,11 @@ namespace VirtualClassRoom.Controllers
     [ApiController]
     public class ResourceController : ControllerBase
     {
-        private readonly string pathForFiles = Path.Join("Static" ,"Resources");
+        private readonly string pathForFiles = Path.Join("Static", "Resources");
         private readonly IResourceRepository _ResourceRepository;
         private readonly IMapper _mapper;
 
-        public ResourceController(IResourceRepository resourceRepository , IMapper mapper)
+        public ResourceController(IResourceRepository resourceRepository, IMapper mapper)
         {
             _ResourceRepository = resourceRepository;
             _mapper = mapper;
@@ -32,10 +32,10 @@ namespace VirtualClassRoom.Controllers
 
 
         [HttpGet]
-    //[Route("api/Courses/{courseId}/Resources")]
-        public ActionResult<IEnumerable<ResourceDto>> GetResourcesForCourse(Guid courseId)
+        //[Route("api/Courses/{courseId}/Resources")]
+        public async Task<ActionResult<IEnumerable<ResourceDto>>> GetResourcesForCourse(Guid courseId)
         {
-            IEnumerable<Resource> resources = _ResourceRepository.GetResources(courseId);
+            IEnumerable<Resource> resources = await _ResourceRepository.GetResources(courseId);
             if (resources == null)
             {
                 return NotFound();
@@ -45,9 +45,9 @@ namespace VirtualClassRoom.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ResourceDto> PostResource(Guid courseId, IFormFile file)
+        public async Task<ActionResult<ResourceDto>> PostResource(Guid courseId, IFormFile file)
         {
-            
+
             Resource resource = new Resource
             {
                 FileName = file.FileName,
@@ -55,7 +55,7 @@ namespace VirtualClassRoom.Controllers
                 CourseId = courseId,
             };
 
-            _ResourceRepository.AddResources(resource);
+            var _ = await _ResourceRepository.AddResources(resource);
 
             using (var stream = System.IO.File.Create(resource.FilePath))
             {
@@ -65,14 +65,15 @@ namespace VirtualClassRoom.Controllers
 
             return CreatedAtRoute("GetResource",
                 new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
-                ,resourceToReturn);
+                , resourceToReturn);
+            return Ok();
         }
 
-        [HttpGet("{ResourceID}",Name = "GetResource")]
-        public ActionResult<ResourceDto> GetResource(Guid ResourceID)
+        [HttpGet("{ResourceID}", Name = "GetResource")]
+        public async Task<ActionResult<ResourceDto>> GetResource(Guid ResourceID)
         {
             // TODO: Add authorization for student access
-            Resource resource = _ResourceRepository.GetResource(ResourceID);
+            Resource resource = await _ResourceRepository.GetResource(ResourceID);
 
             if (resource == null)
             {
@@ -83,29 +84,29 @@ namespace VirtualClassRoom.Controllers
         }
 
         [HttpDelete("{ResourceID}")]
-        public ActionResult DeleteResource(Guid ResourceID)
-        { 
-            Resource resource = _ResourceRepository.GetResource(ResourceID);
+        public async Task<ActionResult> DeleteResource(Guid ResourceID)
+        {
+            Resource resource = await _ResourceRepository.GetResource(ResourceID);
 
             if (resource == null)
             {
                 return NotFound();
             }
             System.IO.File.Delete(resource.FilePath);
-            _ResourceRepository.DeleteResource(ResourceID);
+            var _ = _ResourceRepository.DeleteResource(ResourceID);
             return Accepted();
         }
 
         [HttpGet("{ResourceID}/Download")]
-        public ActionResult DownloadResource(Guid ResourceID)
+        public async Task<ActionResult> DownloadResource(Guid ResourceID)
         {
-            Resource resource = _ResourceRepository.GetResource(ResourceID);
+            Resource resource = await _ResourceRepository.GetResource(ResourceID);
             if (resource == null)
             {
                 return NotFound();
             }
             var content = new FileStream(resource.FilePath, FileMode.Open, FileAccess.Read);
-            var response =  File(content, "application/octet-stream", resource.FileName);
+            var response = File(content, "application/octet-stream", resource.FileName);
             return response;
         }
 

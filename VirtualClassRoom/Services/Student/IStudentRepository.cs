@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Threading.Tasks;
+using VirtualClassRoom.Entities;
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,14 +13,14 @@ namespace VirtualClassRoom.Services
     public interface IStudentRepository
     {
         //IEnumerable<>
-        public Student FindStudent(String  email,String password);
-        public Student GetStudent(Guid studentId);
-        public void UpdateStudent(Guid studentId,Student student);
-        public void AddStudent(Student student);
-        public void DeleteStudent(Guid studentId);
-        public bool StudentExist(Guid studentId);
-        public Student GetStudentByEmail(string email);
-       
+        public Task<Student> FindStudent(String email, String password);
+        public Task<Student> GetStudent(Guid studentId);
+        public Task<Student> UpdateStudent(Guid studentId, Student student);
+        public Task<Student> AddStudent(Student student);
+        public Task<Student> DeleteStudent(Guid studentId);
+        public Task<bool> StudentExist(Guid studentId);
+        public Task<Student> GetStudentByEmail(string email);
+
 
     }
 }

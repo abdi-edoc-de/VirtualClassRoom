@@ -8,15 +8,15 @@ namespace VirtualClassRoom.Services
 {
     public interface ICourseRepository
     {
-        public bool CourseExist(Guid courseId);
+        public Task<bool> CourseExist(Guid courseId);
 
-        public ICollection<Course> GetCoursesForInstructor(Guid instructorId);
-        public void AddCourse(Guid instructorId, Course course);
-        public ICollection<Course> GetCourses();
-        public ICollection<CourseStudent> GetEnrolledCourses(Guid studentId);
-        public void DeleteCourse(Guid courseId);
-        public void UpdateCourse(Course course);
-        public Course GetCourse(Guid courseId);
+        public Task<ICollection<Course>> GetCoursesForInstructor(Guid instructorId);
+        public Task<Course> AddCourse(Guid instructorId, Course course);
+        public Task<ICollection<Course>> GetCourses();
+        public Task<ICollection<Course>> GetEnrolledCourses(Guid studentId);
+        public Task<Course> DeleteCourse(Guid courseId);
+        public Task<Course> UpdateCourse(Course course);
+        public Task<Course> GetCourse(Guid courseId);
 
     }
 }

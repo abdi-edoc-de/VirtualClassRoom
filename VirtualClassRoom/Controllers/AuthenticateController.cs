@@ -40,14 +40,14 @@ namespace VirtualClassRoom.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public ActionResult<UserAuthenticationDto> Authenticate([FromBody] UserCred userCred)
+        public async Task<ActionResult<UserAuthenticationDto>> Authenticate([FromBody] UserCred userCred)
         {
-            var token = _accountService.Authenticate(userCred.UserName, userCred.Password);
+            var token = await _accountService.Authenticate(userCred.UserName, userCred.Password);
             if (token == null)
                 return NotFound();
             if (token.ElementAt(1) == "Student")
             {
-                var student = _studentRepository.FindStudent(userCred.UserName, userCred.Password);
+                var student =await _studentRepository.FindStudent(userCred.UserName, userCred.Password);
                 UserAuthenticationDto studentToReturn = _mapper.Map<UserAuthenticationDto>(student);
                 studentToReturn.Token = token.ElementAt(0);
                 studentToReturn.Role = token.ElementAt(1);
@@ -57,14 +57,14 @@ namespace VirtualClassRoom.Controllers
             else
             {
 
-                var instructor = _instructorRepository.FindInstructor(userCred.UserName, userCred.Password);
+                var instructor =await _instructorRepository.FindInstructor(userCred.UserName, userCred.Password);
                 UserAuthenticationDto instructorToReturn = _mapper.Map<UserAuthenticationDto>(instructor);
                 instructorToReturn.Token = token.ElementAt(0);
                 instructorToReturn.Role = token.ElementAt(1);
                 return Ok(instructorToReturn);
             }
 
-           
+
 
         }
     }
