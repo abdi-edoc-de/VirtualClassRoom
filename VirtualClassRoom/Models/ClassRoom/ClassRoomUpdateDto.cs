@@ -3,15 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VirtualClassRoom.Models.ClassRooms
+namespace VirtualClassRoom.Entities
 {
-    public class ClassRoomDto
+    public class ClassRoomUpdateDto
     {
-        public Guid ClassRoomId { get; set; }
-
         public String ClassRoomName { get; set; }
-
-        public Guid CourseId { get; set; }
-
     }
 }

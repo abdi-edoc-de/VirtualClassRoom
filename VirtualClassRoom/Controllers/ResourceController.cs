@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,42 +8,51 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.Entities;
+using VirtualClassRoom.Models.Resources;
 using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom.Controllers
 {
     [Authorize]
-    [Route("api/Courses/{CourseID}/Resources")]
+    [Route("api/Courses/{courseId}/Resources")]
     [Consumes("application/octet-stream", "multipart/form-data")]
     [ApiController]
     public class ResourceController : ControllerBase
     {
         private readonly string pathForFiles = Path.Join("Static" ,"Resources");
         private readonly IResourceRepository _ResourceRepository;
+        private readonly IMapper _mapper;
 
-        public ResourceController(IResourceRepository resourceRepository)
+        public ResourceController(IResourceRepository resourceRepository , IMapper mapper)
         {
             _ResourceRepository = resourceRepository;
+            _mapper = mapper;
 
         }
 
 
         [HttpGet]
-        public IActionResult GetResourcesForCourse(Guid CourseID)
+    //[Route("api/Courses/{courseId}/Resources")]
+        public ActionResult<IEnumerable<ResourceDto>> GetResourcesForCourse(Guid courseId)
         {
-            IEnumerable<Resource> resources = _ResourceRepository.GetResources(CourseID);
-            return Ok(resources);
+            IEnumerable<Resource> resources = _ResourceRepository.GetResources(courseId);
+            if (resources == null)
+            {
+                return NotFound();
+            }
+            IEnumerable<ResourceDto> resourceToReturn = _mapper.Map<IEnumerable<ResourceDto>>(resources);
+            return Ok(resourceToReturn);
         }
 
         [HttpPost]
-        public IActionResult PostResource(Guid CourseID, IFormFile file)
+        public ActionResult<ResourceDto> PostResource(Guid courseId, IFormFile file)
         {
             
             Resource resource = new Resource
             {
                 FileName = file.FileName,
                 FilePath = Path.Combine(pathForFiles, Path.GetRandomFileName()),
-                CourseId = CourseID,
+                CourseId = courseId,
             };
 
             _ResourceRepository.AddResources(resource);
@@ -51,11 +61,15 @@ namespace VirtualClassRoom.Controllers
             {
                 file.CopyTo(stream);
             }
-            return Ok();
+            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
+
+            return CreatedAtRoute("GetResource",
+                new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
+                ,resourceToReturn);
         }
 
         [HttpGet("{ResourceID}",Name = "GetResource")]
-        public IActionResult GetResource(Guid ResourceID)
+        public ActionResult<ResourceDto> GetResource(Guid ResourceID)
         {
             // TODO: Add authorization for student access
             Resource resource = _ResourceRepository.GetResource(ResourceID);
@@ -64,11 +78,12 @@ namespace VirtualClassRoom.Controllers
             {
                 return NotFound();
             }
-            return Ok(resource);
+            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
+            return Ok(resourceToReturn);
         }
 
         [HttpDelete("{ResourceID}")]
-        public IActionResult DeleteResource(Guid ResourceID)
+        public ActionResult DeleteResource(Guid ResourceID)
         { 
             Resource resource = _ResourceRepository.GetResource(ResourceID);
 
