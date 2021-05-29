@@ -185,7 +185,7 @@ namespace VirtualClassRoom
             {
                 endpoints.MapControllers();
 
-                endpoints.MapHub<SignalRtcHub>("/signalrtc");
+                endpoints.MapHub<SignalRtcHub>("/p/Courses/{courseId}/Classrooms/{ClassroomID}/join");
             });
 
             app.Run(async (context) =>
