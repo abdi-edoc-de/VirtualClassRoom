@@ -108,5 +108,14 @@ namespace VirtualClassRoom.Services
 
             return instructor;
         }
+        public bool InstrucotrExistByEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+            email = email.Trim();
+            return  _appDbContext.Instructors.Any(s => s.Email == email);
+        }
     }
 }

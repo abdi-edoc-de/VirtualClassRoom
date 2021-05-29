@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using VirtualClassRoom.Models.Users;
 
 namespace VirtualClassRoom.Models
 {
-    public class UserCreationDto
+    public class UserCreationDto:UserBaseDto
     {
-        public String FirstName { get; set; }
-       
-        public String LastName { get; set; }
         
-        public String Email { get; set; }
+        [Required]
+        [MinLength(8)]
         public string Password { get; set; }
 
     }

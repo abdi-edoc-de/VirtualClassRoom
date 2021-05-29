@@ -109,6 +109,24 @@ namespace VirtualClassRoom.Services
             return student;
         }
 
+        public bool StudentExistByEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+            email = email.Trim();
+            return  _appDbContext.Students.Any(s=>s.Email==email);
+        }
 
+        public bool StudentExistNoneAsync(Guid studentId)
+        {
+
+            if (studentId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(studentId));
+            }
+            return _appDbContext.Students.Any(s => s.StudentId == studentId);
+        }
     }
 }

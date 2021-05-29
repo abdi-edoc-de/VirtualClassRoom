@@ -111,7 +111,8 @@ namespace VirtualClassRoom
             services.AddControllers();
             services.AddDbContext<AppDbContext>(options =>
                                     options.UseSqlServer(Configuration
-                                    .GetConnectionString("DefaultConnection")));
+                                    .GetConnectionString("De" +
+                                    "faultConnection")));
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IInstructorRepository, InstructorRepository>();
