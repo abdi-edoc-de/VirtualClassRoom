@@ -9,6 +9,7 @@ namespace VirtualClassRoom.Services
     public interface ICourseRepository
     {
         public Task<bool> CourseExist(Guid courseId);
+        public bool CourseExistNoneAsync(Guid courseId);
 
         public Task<ICollection<Course>> GetCoursesForInstructor(Guid instructorId);
         public Task<Course> AddCourse(Guid instructorId, Course course);

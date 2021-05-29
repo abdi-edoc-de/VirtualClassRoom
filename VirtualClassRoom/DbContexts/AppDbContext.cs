@@ -24,11 +24,12 @@ namespace VirtualClassRoom.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CourseStudent>()
+               .HasKey(c => new { c.CourseId, c.StudentId });
             modelBuilder.Entity<ClassRoomStudent>()
                 .HasKey(c => new { c.ClassRoomId, c.StudentId });
 
-            modelBuilder.Entity<CourseStudent>()
-               .HasKey(c => new { c.CourseId, c.StudentId });
+            
 
             modelBuilder.Entity<Student>()
                 .HasIndex(u => u.Email)

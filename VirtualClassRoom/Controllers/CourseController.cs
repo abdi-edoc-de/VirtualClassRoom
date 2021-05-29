@@ -89,13 +89,11 @@ namespace VirtualClassRoom.Controllers
         public async Task<ActionResult<IEnumerable<UserDto>>> AddStudents(Guid courseId, IEnumerable<CourseStudentCreationDto> courseStudents)
         {
             var courseStudentsFromDb = _mapper.Map<IEnumerable<CourseStudent>>(courseStudents);
-            CourseStudent _;
             foreach (var courseStudent in courseStudentsFromDb)
             {
-                _ = await _courseStudentRepository.AddStudentInCourse(courseStudent);
+                await _courseStudentRepository.AddStudentInCourse(courseStudent);
             }
-            var studentIds = courseStudentsFromDb
-                .Select(s => s.StudentId);
+            var studentIds = courseStudentsFromDb.Select(s => s.StudentId);
             var studentFromDb = await _courseStudentRepository.GetStudents(studentIds);
             var studentToReturn = _mapper.Map<IEnumerable<UserDto>>(studentFromDb);
             var idsAsString = string.Join(",", studentIds);
@@ -103,7 +101,7 @@ namespace VirtualClassRoom.Controllers
                                     studentToReturn);
 
         }
-        [HttpGet("courseId/({ids})", Name = "GetStudents")]
+        [HttpGet("courseId/student/({ids})", Name = "GetStudents")]
         public async Task<ActionResult<UserDto>> GetStudents(Guid courseId,
             [FromRoute][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
         {
@@ -165,7 +163,11 @@ namespace VirtualClassRoom.Controllers
                 return NotFound();
             }
             var courseToPathc = _mapper.Map<CourseCreationDto>(courseFromDb);
-            patchCourse.ApplyTo(courseToPathc);
+            patchCourse.ApplyTo(courseToPathc,ModelState);
+            if (!TryValidateModel(patchCourse))
+            {
+                return ValidationProblem(ModelState);
+            }
             _mapper.Map(courseToPathc, courseFromDb);
             var _ = await _courseRepository.UpdateCourse(courseFromDb);
             return Ok(courseFromDb);

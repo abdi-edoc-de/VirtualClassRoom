@@ -18,6 +18,7 @@ namespace VirtualClassRoom.Entities
         [MaxLength(50)]
         public String LastName { get; set; }
         [Required]
+        [MinLength(8)]
         public String Password{get; set; }
         [Required]
         [EmailAddress]

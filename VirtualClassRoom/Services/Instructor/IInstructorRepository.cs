@@ -16,6 +16,8 @@ namespace VirtualClassRoom.Services
         public Task<Instructor> AddInstructor(Instructor instructor);
         public Task<Instructor> DeleteInstructor(Guid instructorId);
         public Task<Instructor> GetInstructorByEmail(string email);
+        public bool InstrucotrExistByEmail(string email);
+
 
 
     }

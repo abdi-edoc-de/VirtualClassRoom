@@ -114,5 +114,14 @@ namespace VirtualClassRoom.Services
             return await _appDbContext.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
 
         }
+
+        public bool CourseExistNoneAsync(Guid courseId)
+        {
+            if (courseId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            return _appDbContext.Courses.Any(s => s.CourseId == courseId);
+        }
     }
 }
