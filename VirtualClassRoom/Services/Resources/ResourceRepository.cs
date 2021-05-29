@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,58 +16,61 @@ namespace VirtualClassRoom.Services
         {
             this._appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
         }
-        public void AddResources(Resource resource)
+        public async Task<Resource> AddResources(Resource resource)
         {
             if (resource == null)
             {
                 throw new ArgumentNullException(nameof(resource));
             }
             _appDbContext.Resources.Add(resource);
-            _appDbContext.SaveChanges();
+            await _appDbContext.SaveChangesAsync();
+            return resource;
         }
 
-        public void DeleteResource(Guid resourceId)
+        public async Task<Resource> DeleteResource(Guid resourceId)
         {
-            if( resourceId == Guid.Empty)
+            if (resourceId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(resourceId));
             }
-            Resource resource = _appDbContext.Resources.FirstOrDefault(r => r.ResourceId == resourceId) ??
+            Resource resource = await _appDbContext.Resources.FirstOrDefaultAsync(r => r.ResourceId == resourceId) ??
                 throw new ArgumentNullException(nameof(resource));
             _appDbContext.Resources.Remove(resource);
+            await _appDbContext.SaveChangesAsync();
+            return resource; 
         }
 
-        public Resource GetResource(Guid resourceId)
+        public async Task<Resource> GetResource(Guid resourceId)
         {
-            if(resourceId == Guid.Empty)
+            if (resourceId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(resourceId));
 
             }
-            Resource resource = _appDbContext.Resources.FirstOrDefault(r => r.ResourceId == resourceId) ??
+            Resource resource = await _appDbContext.Resources.FindAsync(resourceId) ??
                 throw new ArgumentNullException(nameof(resource));
             return resource;
         }
 
-        public IEnumerable<Resource> GetResources(Guid courseId)
+        public async Task<IEnumerable<Resource>> GetResources(Guid courseId)
         {
             if (courseId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(courseId));
 
             }
-            IEnumerable<Resource> resources = _appDbContext.Resources.Where(r => r.CourseId == courseId).ToList() ??
+            IEnumerable<Resource> resources = await _appDbContext.Resources.Where(r => r.CourseId == courseId).ToListAsync() ??
                 throw new ArgumentNullException(nameof(resources));
             return resources;
         }
 
-        public bool ResourceExist(Guid resourceId)
+        public async Task<bool> ResourceExist(Guid resourceId)
         {
             if (resourceId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(resourceId));
             }
-            return _appDbContext.Resources.Any(s => s.ResourceId == resourceId);
+            return await _appDbContext.Resources.AnyAsync(s => s.ResourceId == resourceId);
         }
     }
 }

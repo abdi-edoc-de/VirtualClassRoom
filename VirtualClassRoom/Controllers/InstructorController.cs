@@ -16,7 +16,7 @@ namespace VirtualClassRoom.Controllers
     [Authorize]
     [ApiController]
     [Route("api/authenticate/Instructor")]
-    public class InstructorController: ControllerBase
+    public class InstructorController : ControllerBase
     {
         private readonly IInstructorRepository _instructorRepository;
         private readonly IMapper _mapper;
@@ -27,8 +27,8 @@ namespace VirtualClassRoom.Controllers
             , IAccountService accountService,
             IMapper mapper)
         {
-           _instructorRepository = instructorRepository ??
-                throw new ArgumentNullException(nameof(instructorRepository));
+            _instructorRepository = instructorRepository ??
+                 throw new ArgumentNullException(nameof(instructorRepository));
             _mapper = mapper ??
                 throw new ArgumentNullException(nameof(mapper));
             _accountService = accountService ??
@@ -37,7 +37,7 @@ namespace VirtualClassRoom.Controllers
 
 
         [HttpGet(Name = "GetInstrucotrInfo")]
-        public ActionResult<UserDto> GetInstrucotrInfo()
+        public async Task<ActionResult<UserDto>> GetInstrucotrInfo()
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
@@ -45,7 +45,7 @@ namespace VirtualClassRoom.Controllers
             Guid id = Guid.Parse(token[0].Trim());
             string role = token[1].Trim();
 
-            Instructor instructorFromDb = _instructorRepository.GetInstructor(id);
+            Instructor instructorFromDb = await _instructorRepository.GetInstructor(id);
             if (instructorFromDb == null)
             {
                 return NotFound();
@@ -55,23 +55,23 @@ namespace VirtualClassRoom.Controllers
         }
         [AllowAnonymous]
         [HttpPost("CreateInstructor")]
-        public ActionResult<UserDto> CreateInstructor([FromBody] UserCreationDto instructor)
+        public async Task<ActionResult<UserDto>> CreateInstructor([FromBody] UserCreationDto instructor)
         {
             Instructor instructorEntity = _mapper.Map<Instructor>(instructor);
-            _instructorRepository.AddInstructor(instructorEntity);
+            var _ = await _instructorRepository.AddInstructor(instructorEntity);
             UserDto instructorToReturn = _mapper.Map<UserDto>(instructorEntity);
             return CreatedAtRoute("GetInstructorInformation", new { instructorId = instructorToReturn.Id },
                 instructorToReturn);
         }
 
         [HttpGet("{instructorId}", Name = "GetInstructorInformation")]
-        public ActionResult<UserDto> GetInstructorInformation(Guid instructorId)
+        public async Task<ActionResult<UserDto>> GetInstructorInformation(Guid instructorId)
         {
             if (instructorId == Guid.Empty)
             {
                 return NotFound();
             }
-            Instructor instructor = _instructorRepository.GetInstructor(instructorId);
+            Instructor instructor = await _instructorRepository.GetInstructor(instructorId);
             if (instructor == null)
             {
                 return NotFound();
@@ -80,14 +80,14 @@ namespace VirtualClassRoom.Controllers
             return Ok(instrucorToReturn);
         }
         [HttpPatch("{instructorId}")]
-        public ActionResult UpdateStudent(Guid instructorId,
+        public async Task<ActionResult> UpdateStudent(Guid instructorId,
                                         JsonPatchDocument<UserUpdateDto> patchInstructor)
         {
-            if (!_instructorRepository.InstrucotrExist(instructorId))
+            if (!(await _instructorRepository.InstrucotrExist(instructorId)))
             {
                 return NotFound();
             }
-            Instructor instructorFromDb = _instructorRepository.GetInstructor(instructorId);
+            Instructor instructorFromDb = await _instructorRepository.GetInstructor(instructorId);
             if (instructorFromDb == null)
             {
                 return NotFound();
@@ -97,7 +97,7 @@ namespace VirtualClassRoom.Controllers
             _mapper.Map(instructorToPatch, instructorFromDb);
 
 
-            _instructorRepository.UpdateInstructor( instructorFromDb);
+            var _ = await _instructorRepository.UpdateInstructor(instructorFromDb);
 
             UserDto instructorToReturn = _mapper.Map<UserDto>(instructorFromDb);
             return Ok(instructorToReturn);

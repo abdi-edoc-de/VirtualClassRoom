@@ -18,6 +18,7 @@ namespace VirtualClassRoom.Entities
         [MaxLength(50)]
         public String LastName { get; set; }
         [Required]
+        [MinLength(8)]
         public String Password { get; set; }
         
         [Required]
@@ -28,6 +29,9 @@ namespace VirtualClassRoom.Entities
 
         public ICollection<ClassRoomStudent> ClassRoomStudents { get; set; } = new List<ClassRoomStudent>();
 
-
+        public static implicit operator Student(Task<Student> v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

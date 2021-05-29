@@ -24,11 +24,12 @@ namespace VirtualClassRoom.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<CourseStudent>()
+               .HasKey(c => new { c.CourseId, c.StudentId });
             modelBuilder.Entity<ClassRoomStudent>()
                 .HasKey(c => new { c.ClassRoomId, c.StudentId });
 
-            modelBuilder.Entity<CourseStudent>()
-               .HasKey(c => new { c.CourseId, c.StudentId });
+            
 
             modelBuilder.Entity<Student>()
                 .HasIndex(u => u.Email)
@@ -44,7 +45,7 @@ namespace VirtualClassRoom.DbContexts
                     InstructorId = Guid.Parse("d28888e9-2ba9-473a-a40f-e38cb54f9b35"),
                     FirstName = "Nati",
                     LastName = "Beak",
-                    Password = "12345678",
+                    Password = BCrypt.Net.BCrypt.HashPassword("12345678"),
                     Email="nti@gmail.com",
                 },
                 new Instructor()
@@ -52,7 +53,7 @@ namespace VirtualClassRoom.DbContexts
                     InstructorId = Guid.Parse("da2fd609-d754-4feb-8acd-c4f9ff13ba96"),
                     FirstName = "Aman",
                     LastName = "Debe",
-                    Password = "12345678",
+                    Password = BCrypt.Net.BCrypt.HashPassword("12345678"),
                     Email="Aman@gmail.com",
                 },
                 new Instructor()
@@ -60,7 +61,7 @@ namespace VirtualClassRoom.DbContexts
                     InstructorId = Guid.Parse("102b566b-ba1f-404c-b2df-e2cde39ade09"),
                     FirstName = "Kidus",
                     LastName = "Beak",
-                    Password = "12345678",
+                    Password = BCrypt.Net.BCrypt.HashPassword("12345678"),
                     Email="Kidus@gmail.com",
                 },
                 new Instructor()
@@ -68,7 +69,7 @@ namespace VirtualClassRoom.DbContexts
                     InstructorId = Guid.Parse("2902b665-1190-4c70-9915-b9c2d7680450"),
                     FirstName = "Biruk",
                     LastName = "Beak",
-                    Password = "12345678",
+                    Password = BCrypt.Net.BCrypt.HashPassword("12345678"),
                     Email="biruk@gmail.com",
                 });
 
@@ -116,7 +117,7 @@ namespace VirtualClassRoom.DbContexts
                     StudentId = Guid.Parse("102b566b-ba1f-404c-b2df-e2cde39ade09"),
                     FirstName = "Hanan",
                     LastName = "Debe",
-                    Password = "12345678",
+                    Password = BCrypt.Net.BCrypt.HashPassword("12345678"),
                     Email="hanan@gmail.com",
                 },
                 new Student()
@@ -132,7 +133,7 @@ namespace VirtualClassRoom.DbContexts
                     StudentId = Guid.Parse("2ee49fe3-edf2-4f91-8409-3eb25ce6ca51"),
                     FirstName = "Beki",
                     LastName = "Beak",
-                    Password = "12345678",
+                    Password = BCrypt.Net.BCrypt.HashPassword("12345678"),
                     Email="beki@gmail.com",
                 });
               modelBuilder.Entity<CourseStudent>().HasData(

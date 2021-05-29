@@ -8,12 +8,12 @@ namespace VirtualClassRoom.Services
 {
     public interface IClassRoomRepository
     {
-        public bool ClassRoomExist(Guid classRoomId);
+        public Task<bool> ClassRoomExist(Guid classRoomId);
 
-        public ClassRoom GetVirtualClassRoom(Guid virtualRoomId);
-        public void UpdateVirualClassRoom(Guid virtualRoomId, ClassRoom virtualClassRoom);
-        public IEnumerable<ClassRoom> GetCourseClassRooms(Guid courseId);
-        public void AddClassRoom(ClassRoom classRoom);
+        public Task<ClassRoom> GetVirtualClassRoom(Guid virtualRoomId);
+        public Task<ClassRoom> UpdateVirualClassRoom(Guid virtualRoomId, ClassRoom virtualClassRoom);
+        public Task<IEnumerable<ClassRoom>> GetCourseClassRooms(Guid courseId);
+        public Task<ClassRoom> AddClassRoom(ClassRoom classRoom);
 
     }
 }

@@ -8,12 +8,12 @@ namespace VirtualClassRoom.Services
 {
     public interface IResourceRepository
     {
-        public bool ResourceExist(Guid resourceId);
+        public Task<bool> ResourceExist(Guid resourceId);
 
-        public void AddResources(Resource resource);
-        public void DeleteResource(Guid resourceId);
-        public Resource GetResource(Guid resourceId);
-        public IEnumerable<Resource> GetResources(Guid courseId);
+        public Task<Resource> AddResources(Resource resource);
+        public Task<Resource> DeleteResource(Guid resourceId);
+        public Task<Resource> GetResource(Guid resourceId);
+        public Task<IEnumerable<Resource>> GetResources(Guid courseId);
 
     }
 }

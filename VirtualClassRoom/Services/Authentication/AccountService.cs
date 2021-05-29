@@ -24,9 +24,9 @@ namespace VirtualClassRoom.Services
             _instructprRepository = instructorRepository;
         }
 
-        public IEnumerable<string> Authenticate(string username, string password)
+        public async Task<IEnumerable<string>> Authenticate(string username, string password)
         {
-            Student student = _studentRepository.FindStudent(username, password);
+            Student student = await _studentRepository.FindStudent(username, password);
             Guid id = Guid.Parse("5b1c2b4d-48c7-402a-80c3-cc796ad49c6b");
             string role = "Student";
             if (student != null)
@@ -36,14 +36,18 @@ namespace VirtualClassRoom.Services
             if (student == null)
             {
                 role = "Instructor";
-                Instructor instructor = _instructprRepository.FindInstructor(username, password);
-                id = instructor.InstructorId;
+                Instructor instructor = await _instructprRepository.FindInstructor(username, password);
 
                 if (instructor == null)
                 {
                     return null;
                 }
-            }            
+                else
+                {
+                    id = instructor.InstructorId;
+                }
+
+            }
             return new List<string> { _jwtAuthenticationManager.Authenticate(id.ToString(), role),role };
         }
 

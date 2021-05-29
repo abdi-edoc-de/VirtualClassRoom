@@ -22,6 +22,7 @@ using VirtualClassRoom.DbContexts;
 //using VirtualClassRoom.Entities;
 using VirtualClassRoom.Services;
 using VirtualClassRoom.Services.CourseStudents;
+using VirtualClassRoom.SignalRTC;
 
 namespace VirtualClassRoom
 {
@@ -38,17 +39,6 @@ namespace VirtualClassRoom
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy(name: MyAllowSpecificOrigins,
-                                  builder =>
-                                  {
-                                      builder.WithOrigins("http://localhost:3000")
-                                      .AllowAnyHeader()
-                                        .AllowAnyMethod();
-                                  });
-            });
-
             services.AddSwaggerGen();
 
             
@@ -121,7 +111,8 @@ namespace VirtualClassRoom
             services.AddControllers();
             services.AddDbContext<AppDbContext>(options =>
                                     options.UseSqlServer(Configuration
-                                    .GetConnectionString("DefaultConnection")));
+                                    .GetConnectionString("De" +
+                                    "faultConnection")));
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IStudentRepository, StudentRepository>();
             services.AddScoped<IInstructorRepository, InstructorRepository>();
@@ -156,7 +147,20 @@ namespace VirtualClassRoom
             
 
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                    builder => builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500","http://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
+
+            services.AddSignalR();
+
         }
+
+        readonly string MyAllowSpecificOrigins = "AllowOrigins";
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -171,7 +175,9 @@ namespace VirtualClassRoom
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            // app.UseCors(MyAllowSpecificOrigins);
+
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
@@ -179,7 +185,14 @@ namespace VirtualClassRoom
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers().RequireCors(MyAllowSpecificOrigins);
+                endpoints.MapControllers();
+
+                endpoints.MapHub<SignalRtcHub>("/signalrtc");
+            });
+
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Hello World!");
             });
             
         }

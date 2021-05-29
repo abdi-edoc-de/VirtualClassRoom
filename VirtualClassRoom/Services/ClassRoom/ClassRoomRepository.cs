@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,53 +19,54 @@ namespace VirtualClassRoom.Services
         {
             this._appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
         }
-        public void AddClassRoom(ClassRoom classRoom)
+        public async Task<ClassRoom> AddClassRoom(ClassRoom classRoom)
         {
             if (classRoom == null)
             {
                 throw new ArgumentNullException(nameof(classRoom));
             }
             _appDbContext.ClassRooms.Add(classRoom);
-            _appDbContext.SaveChanges();
+            await _appDbContext.SaveChangesAsync();
+            return classRoom;
 
 
         }
 
-        public bool ClassRoomExist(Guid classRoomId)
+        public async Task<bool> ClassRoomExist(Guid classRoomId)
         {
             if (classRoomId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(classRoomId));
             }
-            return _appDbContext.ClassRooms.Any(s => s.ClassRoomId == classRoomId);
+            return await _appDbContext.ClassRooms.AnyAsync(s => s.ClassRoomId == classRoomId);
         }
 
-        public IEnumerable<ClassRoom> GetCourseClassRooms(Guid courseId)
+        public async Task<IEnumerable<ClassRoom>> GetCourseClassRooms(Guid courseId)
         {
             if (courseId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(courseId));
 
             }
-            IEnumerable<ClassRoom> classRooms = _appDbContext.ClassRooms
-                .Where(cr => cr.CourseId == courseId).ToList() ?? throw new ArgumentNullException(nameof(classRooms));
+            IEnumerable<ClassRoom> classRooms = await _appDbContext.ClassRooms
+                .Where(cr => cr.CourseId == courseId).ToListAsync() ?? throw new ArgumentNullException(nameof(classRooms));
             return classRooms;
         }
 
-        public ClassRoom GetVirtualClassRoom(Guid virtualRoomId)
+        public async Task<ClassRoom> GetVirtualClassRoom(Guid virtualRoomId)
         {
             if (virtualRoomId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(virtualRoomId));
 
             }
-            ClassRoom classRoom = _appDbContext.ClassRooms.FirstOrDefault(cr => cr.ClassRoomId == virtualRoomId) ??
+            ClassRoom classRoom = await _appDbContext.ClassRooms.FirstOrDefaultAsync(cr => cr.ClassRoomId == virtualRoomId) ??
                 throw new ArgumentNullException(nameof(classRoom));
             return classRoom;
         }
 
 
-        public void UpdateVirualClassRoom(Guid virtualRoomId, ClassRoom virtualClassRoom)
+        public async Task<ClassRoom> UpdateVirualClassRoom(Guid virtualRoomId, ClassRoom virtualClassRoom)
         {
 
             if (virtualRoomId == Guid.Empty)
@@ -75,7 +77,9 @@ namespace VirtualClassRoom.Services
             ClassRoom classRoom = _appDbContext.ClassRooms.FirstOrDefault(cr => cr.ClassRoomId == virtualRoomId) ??
                throw new ArgumentNullException(nameof(classRoom));
             _appDbContext.ClassRooms.Update(virtualClassRoom);
-            _appDbContext.SaveChanges();
+            await _appDbContext.SaveChangesAsync();
+            return virtualClassRoom;
+
         }
     }
 }

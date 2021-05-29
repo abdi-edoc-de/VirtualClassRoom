@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace VirtualClassRoom.Services.CourseStudents
         {
             this._appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
         }
-        public void AddStudentInCourse(CourseStudent courseStudent)
+        public async Task<CourseStudent> AddStudentInCourse(CourseStudent courseStudent)
         {
 
             if (courseStudent == null)
@@ -23,34 +24,36 @@ namespace VirtualClassRoom.Services.CourseStudents
                 throw new ArgumentNullException(nameof(courseStudent));
             }
             _appDbContext.CourseStudents.Add(courseStudent);
-            _appDbContext.SaveChanges();
-            
+            await _appDbContext.SaveChangesAsync();
+            return courseStudent;
+
+
         }
 
-        public IEnumerable<Student> GetStudents(Guid courseId)
+        public async Task<IEnumerable<Student>> GetStudents(Guid courseId)
         {
             if (courseId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(courseId));
             }
-            List<CourseStudent> courseStudent = _appDbContext.CourseStudents
-                .Where(c=>c.CourseId==courseId).ToList();
-            List<Student> students=new List<Student>();
-            foreach(CourseStudent i in courseStudent)
+            List<CourseStudent> courseStudent = await _appDbContext.CourseStudents
+                .Where(c => c.CourseId == courseId).ToListAsync();
+            List<Student> students = new List<Student>();
+            foreach (CourseStudent i in courseStudent)
             {
                 students.Add(
-                    _appDbContext.Students.First(c=>c.StudentId==i.StudentId));
+                    await _appDbContext.Students.FirstAsync(c => c.StudentId == i.StudentId));
             }
             return students;
 
         }
-        public IEnumerable<Student> GetStudents(IEnumerable<Guid> studentIds)
+        public async Task<IEnumerable<Student>> GetStudents(IEnumerable<Guid> studentIds)
         {
             if (studentIds == null)
             {
                 throw new ArgumentNullException(nameof(studentIds));
             }
-            return _appDbContext.Students.Where(s => studentIds.Contains(s.StudentId)).ToList();
+            return await _appDbContext.Students.Where(s => studentIds.Contains(s.StudentId)).ToListAsync();
         }
     }
 }

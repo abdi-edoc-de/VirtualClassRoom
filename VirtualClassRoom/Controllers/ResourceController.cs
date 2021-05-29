@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,90 +8,105 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.Entities;
+using VirtualClassRoom.Models.Resources;
 using VirtualClassRoom.Services;
 
 namespace VirtualClassRoom.Controllers
 {
     [Authorize]
-    [Route("api/Courses/{CourseID}/Resources")]
+    [Route("api/Courses/{courseId}/Resources")]
     [Consumes("application/octet-stream", "multipart/form-data")]
     [ApiController]
     public class ResourceController : ControllerBase
     {
-        private readonly string pathForFiles = Path.Join("Static" ,"Resources");
+        private readonly string pathForFiles = Path.Join("Static", "Resources");
         private readonly IResourceRepository _ResourceRepository;
+        private readonly IMapper _mapper;
 
-        public ResourceController(IResourceRepository resourceRepository)
+        public ResourceController(IResourceRepository resourceRepository, IMapper mapper)
         {
             _ResourceRepository = resourceRepository;
+            _mapper = mapper;
 
         }
 
 
         [HttpGet]
-        public IActionResult GetResourcesForCourse(Guid CourseID)
+        //[Route("api/Courses/{courseId}/Resources")]
+        public async Task<ActionResult<IEnumerable<ResourceDto>>> GetResourcesForCourse(Guid courseId)
         {
-            IEnumerable<Resource> resources = _ResourceRepository.GetResources(CourseID);
-            return Ok(resources);
+            IEnumerable<Resource> resources = await _ResourceRepository.GetResources(courseId);
+            if (resources == null)
+            {
+                return NotFound();
+            }
+            IEnumerable<ResourceDto> resourceToReturn = _mapper.Map<IEnumerable<ResourceDto>>(resources);
+            return Ok(resourceToReturn);
         }
 
         [HttpPost]
-        public IActionResult PostResource(Guid CourseID, IFormFile file)
+        public async Task<ActionResult<ResourceDto>> PostResource(Guid courseId, IFormFile file)
         {
-            
+
             Resource resource = new Resource
             {
                 FileName = file.FileName,
                 FilePath = Path.Combine(pathForFiles, Path.GetRandomFileName()),
-                CourseId = CourseID,
+                CourseId = courseId,
             };
 
-            _ResourceRepository.AddResources(resource);
+            var _ = await _ResourceRepository.AddResources(resource);
 
             using (var stream = System.IO.File.Create(resource.FilePath))
             {
                 file.CopyTo(stream);
             }
+            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
+
+            return CreatedAtRoute("GetResource",
+                new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
+                , resourceToReturn);
             return Ok();
         }
 
-        [HttpGet("{ResourceID}",Name = "GetResource")]
-        public IActionResult GetResource(Guid ResourceID)
+        [HttpGet("{ResourceID}", Name = "GetResource")]
+        public async Task<ActionResult<ResourceDto>> GetResource(Guid ResourceID)
         {
             // TODO: Add authorization for student access
-            Resource resource = _ResourceRepository.GetResource(ResourceID);
+            Resource resource = await _ResourceRepository.GetResource(ResourceID);
 
             if (resource == null)
             {
                 return NotFound();
             }
-            return Ok(resource);
+            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
+            return Ok(resourceToReturn);
         }
 
         [HttpDelete("{ResourceID}")]
-        public IActionResult DeleteResource(Guid ResourceID)
-        { 
-            Resource resource = _ResourceRepository.GetResource(ResourceID);
+        public async Task<ActionResult> DeleteResource(Guid ResourceID)
+        {
+            Resource resource = await _ResourceRepository.GetResource(ResourceID);
 
             if (resource == null)
             {
                 return NotFound();
             }
             System.IO.File.Delete(resource.FilePath);
-            _ResourceRepository.DeleteResource(ResourceID);
+            var _ = _ResourceRepository.DeleteResource(ResourceID);
             return Accepted();
         }
 
         [HttpGet("{ResourceID}/Download")]
-        public ActionResult DownloadResource(Guid ResourceID)
+        public async Task<ActionResult> DownloadResource(Guid ResourceID)
         {
-            Resource resource = _ResourceRepository.GetResource(ResourceID);
+            Resource resource = await _ResourceRepository.GetResource(ResourceID);
             if (resource == null)
             {
                 return NotFound();
             }
             var content = new FileStream(resource.FilePath, FileMode.Open, FileAccess.Read);
-            var response =  File(content, "application/octet-stream", resource.FileName);
+            var response = File(content, "application/octet-stream", resource.FileName);
             return response;
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using VirtualClassRoom.Entities;
 
 namespace VirtualClassRoom.Services
 {
-    public class InstructorRepository:IInstructorRepository
+    public class InstructorRepository : IInstructorRepository
     {
         private readonly AppDbContext _appDbContext;
 
@@ -15,27 +16,30 @@ namespace VirtualClassRoom.Services
         {
             this._appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
         }
-        public void AddInstructor(Instructor instructor)
+        public async Task<Instructor> AddInstructor(Instructor instructor)
         {
             if (instructor == null)
             {
                 throw new ArgumentNullException(nameof(instructor));
             }
             _appDbContext.Instructors.Add(instructor);
-            _appDbContext.SaveChanges();
+            await _appDbContext.SaveChangesAsync();
+            return instructor;
         }
-        public void DeleteInstructor(Guid instructorId)
+        public async Task<Instructor> DeleteInstructor(Guid instructorId)
         {
             if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
-            Instructor instructor = _appDbContext.Instructors.FirstOrDefault(s => s.InstructorId == instructorId) ??
-                throw new ArgumentNullException(nameof(instructor));
+            Instructor instructor = await _appDbContext.Instructors.FirstOrDefaultAsync(s => s.InstructorId == instructorId)
+                ?? throw new ArgumentNullException(nameof(instructor));
             _appDbContext.Instructors.Remove(instructor);
+            await _appDbContext.SaveChangesAsync();
+            return instructor;
         }
 
-        public Instructor FindInstructor(string email, string password)
+        public async Task<Instructor> FindInstructor(string email, string password)
         {
             if (String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password))
             {
@@ -43,50 +47,56 @@ namespace VirtualClassRoom.Services
             }
             email = email.Trim();
             password = password.Trim();
-            Instructor instructor = _appDbContext.Instructors.FirstOrDefault(s => s.Email == email && s.Password==password );
-            return instructor;
-            
+            Instructor instructor = await _appDbContext.Instructors.FirstOrDefaultAsync(s => s.Email == email);
+            if (instructor != null && BCrypt.Net.BCrypt.Verify(password, instructor.Password))
+            {
+                return instructor;
+            }
+            return null;
+
 
 
         }
 
-        public bool VerifyPassword(string plainPassword, string hashedPassword)
-        {
-            return BCrypt.Net.BCrypt.Verify(plainPassword, hashedPassword);
-        }
-        public Instructor GetInstructor(Guid instructorId)
+        //public bool VerifyPassword(string plainPassword, string hashedPassword)
+        //{
+        //    return BCrypt.Net.BCrypt.Verify(plainPassword, hashedPassword);
+        //}
+        public async Task<Instructor> GetInstructor(Guid instructorId)
         {
             if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
 
-            return _appDbContext.Instructors
-                        .FirstOrDefault(c => c.InstructorId == instructorId);
+            return await _appDbContext.Instructors.FindAsync(instructorId);
 
         }
 
-        public bool InstrucotrExist(Guid instructorId)
+        public async Task<bool> InstrucotrExist(Guid instructorId)
         {
             if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
-            return _appDbContext.Instructors.Any(s => s.InstructorId == instructorId);
+            return await _appDbContext.Instructors.AnyAsync(s => s.InstructorId == instructorId);
         }
 
-        public void UpdateInstructor(Instructor instructor)
+        public async Task<Instructor> UpdateInstructor(Instructor instructor)
         {
-            
+
             if (instructor == null)
             {
                 throw new ArgumentNullException(nameof(instructor));
 
             }
             _appDbContext.Update(instructor);
-            _appDbContext.SaveChanges();
+            await _appDbContext.SaveChangesAsync();
+            return instructor;
+
+
         }
-        public Instructor GetInstructorByEmail(string email)
+        public async Task<Instructor> GetInstructorByEmail(string email)
         {
             if (String.IsNullOrWhiteSpace(email))
             {
@@ -94,10 +104,18 @@ namespace VirtualClassRoom.Services
             }
 
             email = email.Trim();
-            Instructor instructor = _appDbContext.Instructors.FirstOrDefault(s => s.Email == email);
-            if (instructor == null)
-            { return null; }
+            Instructor instructor = await _appDbContext.Instructors.FirstOrDefaultAsync(s => s.Email == email);
+
             return instructor;
+        }
+        public bool InstrucotrExistByEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+            email = email.Trim();
+            return  _appDbContext.Instructors.Any(s => s.Email == email);
         }
     }
 }

@@ -7,71 +7,86 @@ using System.Threading.Tasks;
 using VirtualClassRoom.Services;
 using VirtualClassRoom.Entities;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using VirtualClassRoom.Models.ClassRooms;
 
 namespace VirtualClassRoom.Controllers
 {
     [Authorize]
-    [Route("api/Courses/{CourseID}/Classrooms")]
+    [Route("api/Courses/{courseId}/Classrooms")]
     [ApiController]
     public class ClassroomController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly IClassRoomRepository _ClassroomRepository;
 
-        public ClassroomController(IClassRoomRepository classRoomRepository)
+        public ClassroomController(IClassRoomRepository classRoomRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _ClassroomRepository = classRoomRepository;
         }
 
-        [HttpGet("{ClassroomID}")]
-        public IActionResult GetVirtualClassroom(Guid ClassroomID)
+        [HttpGet("{ClassroomID}", Name = "GetClassRoom")]
+        public async Task<ActionResult<ClassRoomDto>> GetVirtualClassroom(Guid ClassroomID)
         {
-            var classroom = _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
+            var classroom = await _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
             if (classroom == null)
             {
                 return NotFound();
             }
-            return Ok(classroom);
+            ClassRoomDto classRoomToReturn = _mapper.Map<ClassRoomDto>(classroom);
+
+            return Ok(classRoomToReturn);
         }
 
         [HttpGet(Name = "GetVirtualClassroomsForCourse")]
-        public IActionResult GetVirtualClassroomsForCourse(Guid CourseID)
+        public async Task<ActionResult<IEnumerable<ClassRoomDto>>> GetVirtualClassroomsForCourse(Guid courseId)
         {
-            var classrooms = _ClassroomRepository.GetCourseClassRooms(CourseID);
-            return Ok(classrooms);
+
+            var classrooms = await _ClassroomRepository.GetCourseClassRooms(courseId);
+            if (classrooms == null)
+            {
+                return NotFound();
+
+            }
+            var classRoomToReturn = _mapper.Map<IEnumerable<ClassRoomDto>>(classrooms);
+            return Ok(classRoomToReturn);
         }
 
         [HttpPost]
         [Consumes("application/json")]
-        public ActionResult PostVirtualClassroom(Guid CourseID, [FromBody] ClassRoomDto classRoomDTO)
+        public async Task<ActionResult<ClassRoomDto>> PostVirtualClassroom(Guid courseId, [FromBody] ClassRoomUpdateDto classRoomDTO)
         {
             ClassRoom classRoom = new ClassRoom
             {
                 Url = Guid.NewGuid().ToString(),
-                CourseId = CourseID,
+                CourseId = courseId,
                 ClassRoomName = classRoomDTO.ClassRoomName
             };
-            _ClassroomRepository.AddClassRoom(classRoom);
-            return Ok();
-            //return CreatedAtAction("GetVirtualClassroom", new { id = classRoom.ClassRoomId }, classRoom);
+            var _ = await _ClassroomRepository.AddClassRoom(classRoom);
+            var classRoomToReturn = _mapper.Map<ClassRoomDto>(classRoom);
+            return CreatedAtAction("GetClassRoom",
+                             new { CourseId = courseId, ClassRoomId = classRoomToReturn.ClassRoomId },
+                             classRoomToReturn);
         }
 
         [HttpGet("{ClassroomID}/join")]
-        public IActionResult JoinVirtualClassroom(Guid ClassroomID)
+        public async Task<ActionResult> JoinVirtualClassroom(Guid ClassroomID)
         {
             // TODO: Implement Join Classroom feature
             return Ok(ClassroomID);
         }
 
         [HttpPatch("{ClassroomID}")]
-        public IActionResult UpdateVirtualClassroom(Guid ClassroomID, ClassRoomDto classRoom)
+        public async Task<ActionResult> UpdateVirtualClassroom(Guid ClassroomID, ClassRoomDto classRoom)
         {
-            var classroom = _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
+            var classroom = await _ClassroomRepository.GetVirtualClassRoom(ClassroomID);
             if (classroom == null)
             {
                 return NotFound();
             }
             classroom.ClassRoomName = classRoom.ClassRoomName;
-            _ClassroomRepository.UpdateVirualClassRoom(ClassroomID, classroom);
+            var _ = await _ClassroomRepository.UpdateVirualClassRoom(ClassroomID, classroom);
             return Accepted();
         }
     }

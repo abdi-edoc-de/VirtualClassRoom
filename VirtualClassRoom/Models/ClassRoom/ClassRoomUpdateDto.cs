@@ -4,13 +4,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VirtualClassRoom.Models.Users
+namespace VirtualClassRoom.Entities
 {
-    public class UserCred
+    public class ClassRoomUpdateDto
     {
         [Required]
-        public string UserName { get; set; }
-        [Required]
-        public string Password { get; set; }
+        public String ClassRoomName { get; set; }
     }
 }

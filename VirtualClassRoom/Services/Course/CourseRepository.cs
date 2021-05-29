@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,21 +8,21 @@ using VirtualClassRoom.Entities;
 
 namespace VirtualClassRoom.Services
 {
-     class CourseRepository : ICourseRepository
+    class CourseRepository : ICourseRepository
     {
         private readonly AppDbContext _appDbContext;
 
         public CourseRepository(AppDbContext appDbContext)
         {
-            this._appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext)); 
+            this._appDbContext = appDbContext ?? throw new ArgumentNullException(nameof(appDbContext));
         }
-        public void AddCourse(Guid instructorId, Course course)
+        public async Task<Course> AddCourse(Guid instructorId, Course course)
         {
             if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
-            var instructor = _appDbContext.Instructors.FirstOrDefault(i => i.InstructorId == instructorId);
+            var instructor = await _appDbContext.Instructors.FirstOrDefaultAsync(i => i.InstructorId == instructorId);
             if (course == null)
             {
                 throw new ArgumentNullException(nameof(course));
@@ -29,83 +30,98 @@ namespace VirtualClassRoom.Services
             course.InstructorId = instructorId;
             course.Instructor = instructor ?? throw new ArgumentNullException(nameof(instructor));
             _appDbContext.Courses.Add(course);
-            _appDbContext.SaveChanges();
+            await _appDbContext.SaveChangesAsync();
+            return course;
         }
 
-  
-        public ICollection<CourseStudent> GetEnrolledCourses(Guid studentId)
+
+        public async Task<ICollection<Course>> GetEnrolledCourses(Guid studentId)
         {
             if (studentId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(studentId));
             }
 
-            return _appDbContext.CourseStudents
+            var courseStudents = await _appDbContext.CourseStudents
                         .Where(c => c.StudentId == studentId)
-                        .ToList();
+                        .ToListAsync();
+            List<Guid> courseIds = courseStudents.Select(cs => cs.CourseId).ToList();
+            var courses = await _appDbContext.Courses.Where(c => courseIds.Contains(c.CourseId)).ToListAsync();
+            return courses;
+
         }
-        public ICollection<Course> GetCourses()
-        {            
-            return _appDbContext.Courses.ToList();
+        public async Task<ICollection<Course>> GetCourses()
+        {
+            return await _appDbContext.Courses.ToListAsync();
         }
 
-        public ICollection<Course> GetCoursesForInstructor(Guid instructorId)
+        public async Task<ICollection<Course>> GetCoursesForInstructor(Guid instructorId)
         {
             if (instructorId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(instructorId));
             }
 
-            return _appDbContext.Courses
+            return await _appDbContext.Courses
                         .Where(c => c.InstructorId == instructorId)
-                        .ToList();
+                        .ToListAsync();
         }
-        
-        public void UpdateCourse(Course course)
+
+        public async Task<Course> UpdateCourse(Course course)
         {
             if (course == null)
             {
                 throw new ArgumentNullException(nameof(course));
             }
             _appDbContext.Update(course);
-            _appDbContext.SaveChanges();
-
+            await _appDbContext.SaveChangesAsync();
+            return course;
         }
 
-        public void DeleteCourse(Guid courseId)
+        public async Task<Course> DeleteCourse(Guid courseId)
         {
             if (courseId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(courseId));
             }
-            var course = _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId);
+            var course = await _appDbContext.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
             if (course == null)
             {
                 throw new ArgumentNullException(nameof(course));
 
             }
             _appDbContext.Courses.Remove(course);
-            _appDbContext.SaveChanges();
+            await _appDbContext.SaveChangesAsync();
+
+            return course;
+        }
+
+        public async Task<bool> CourseExist(Guid courseId)
+        {
+            if (courseId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            return await _appDbContext.Courses.AnyAsync(s => s.CourseId == courseId);
+        }
+
+        public async Task<Course> GetCourse(Guid courseId)
+        {
+            if (courseId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            return await _appDbContext.Courses.FirstOrDefaultAsync(c => c.CourseId == courseId);
 
         }
 
-        public bool CourseExist(Guid courseId)
+        public bool CourseExistNoneAsync(Guid courseId)
         {
             if (courseId == Guid.Empty)
             {
                 throw new ArgumentNullException(nameof(courseId));
             }
             return _appDbContext.Courses.Any(s => s.CourseId == courseId);
-        }
-
-        public Course GetCourse(Guid courseId)
-        {
-            if(courseId == Guid.Empty)
-            {
-                throw new ArgumentNullException(nameof(courseId));
-            }
-            return _appDbContext.Courses.FirstOrDefault(c => c.CourseId == courseId);
-            
         }
     }
 }
