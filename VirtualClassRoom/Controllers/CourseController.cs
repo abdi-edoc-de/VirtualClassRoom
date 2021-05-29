@@ -164,7 +164,7 @@ namespace VirtualClassRoom.Controllers
             }
             var courseToPathc = _mapper.Map<CourseCreationDto>(courseFromDb);
             patchCourse.ApplyTo(courseToPathc,ModelState);
-            if (TryValidateModel(patchCourse))
+            if (!TryValidateModel(patchCourse))
             {
                 return ValidationProblem(ModelState);
             }
