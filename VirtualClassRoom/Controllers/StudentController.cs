@@ -125,6 +125,25 @@ namespace VirtualClassRoom.Controllers
             return Ok(studentToReturn);
 
         }
+        [HttpGet("Sstudent/{studentEmail}")]
+        public async Task<ActionResult<UserDto>> GetOneStudentInfoByEmail(string studentEmail)
+        {
+
+            if (string.IsNullOrWhiteSpace(studentEmail))
+            {
+                return NotFound();
+            }
+
+            studentEmail = studentEmail.Trim();
+            var studentFromDb = await _studentRepository.GetStudentByEmail(studentEmail);
+            if (studentFromDb == null)
+            {
+                return NotFound();
+            }
+            var studentToReturn = _mapper.Map<UserDto>(studentFromDb);
+            return Ok(studentToReturn);
+
+        }
 
 
 
