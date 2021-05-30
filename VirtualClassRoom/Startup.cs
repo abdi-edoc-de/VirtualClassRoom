@@ -28,7 +28,7 @@ namespace VirtualClassRoom
 {
     public class Startup
     {
-
+        
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -39,9 +39,9 @@ namespace VirtualClassRoom
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddSwaggerGen();
 
+            
 
 
             services.AddControllers(setUpAction =>
@@ -150,7 +150,7 @@ namespace VirtualClassRoom
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
-                    builder => builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500")
+                    builder => builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500","http://localhost:3000")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
@@ -176,9 +176,10 @@ namespace VirtualClassRoom
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseCors(MyAllowSpecificOrigins);
+            // app.UseCors(MyAllowSpecificOrigins);
 
             app.UseRouting();
+            app.UseCors(MyAllowSpecificOrigins);
             app.UseAuthentication();
             app.UseAuthorization();
 
