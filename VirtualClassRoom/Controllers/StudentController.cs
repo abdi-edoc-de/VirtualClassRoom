@@ -125,7 +125,7 @@ namespace VirtualClassRoom.Controllers
             return Ok(studentToReturn);
 
         }
-        [HttpGet("StudentEmail/{studentEmail}")]
+        [HttpGet("{studentEmail}")]
         public async Task<ActionResult<UserDto>> GetOneStudentInfoByEmail(string studentEmail)
         {
 
