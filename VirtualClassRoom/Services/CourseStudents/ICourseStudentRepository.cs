@@ -11,5 +11,7 @@ namespace VirtualClassRoom.Services.CourseStudents
         public  Task<CourseStudent> AddStudentInCourse(CourseStudent courseStudent);
         public Task<IEnumerable<Student>> GetStudents(Guid courseId);
         public Task<IEnumerable<Student>> GetStudents(IEnumerable<Guid> studentIds);
+        public bool StudentExistInCourse(Guid studentIds,Guid courseId);
+
     }
 }

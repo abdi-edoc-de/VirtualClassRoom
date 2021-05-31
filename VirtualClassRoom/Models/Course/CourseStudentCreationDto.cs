@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using VirtualClassRoom.Services;
+using VirtualClassRoom.Services.CourseStudents;
 
 namespace VirtualClassRoom.Models.Course
 {
@@ -19,6 +20,8 @@ namespace VirtualClassRoom.Models.Course
         {
             var _couresRepository = (ICourseRepository)validationContext.GetService(typeof(ICourseRepository));
             var _studentRepository = (IStudentRepository)validationContext.GetService(typeof(IStudentRepository));
+            var _courseStudentRepository = (ICourseStudentRepository)validationContext.GetService(typeof(ICourseStudentRepository));
+
 
             if (!_studentRepository.StudentExistNoneAsync(StudentId))
 
@@ -32,6 +35,13 @@ namespace VirtualClassRoom.Models.Course
             {
                 yield return new ValidationResult(
                     "The Course Does not Eixist",
+                    new[] { "UserBaseDto" });
+            }
+            if (_courseStudentRepository.StudentExistInCourse(StudentId,CourseId))
+
+            {
+                yield return new ValidationResult(
+                    "The Student Already Eixist in the course",
                     new[] { "UserBaseDto" });
             }
         }
