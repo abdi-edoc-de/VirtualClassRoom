@@ -102,6 +102,18 @@ namespace VirtualClassRoom.Controllers
                                     studentToReturn);
 
         }
+        public async Task<ActionResult<CourseCreationDto>> AddStudents(Guid courseId, CourseStudentCreationDto courseStudents)
+        {
+            var courseStudentsFromDb = _mapper.Map<CourseStudent>(courseStudents);
+
+           
+            await _courseStudentRepository.AddStudentInCourse(courseStudentsFromDb);
+
+
+
+            return Ok(courseStudents);
+
+        }
         [HttpGet("courseId/student/({ids})", Name = "GetStudents")]
         public async Task<ActionResult<UserDto>> GetStudents(Guid courseId,
             [FromRoute][ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
