@@ -55,18 +55,18 @@ namespace VirtualClassRoom.Controllers
                 CourseId = courseId,
             };
 
-            var _ = await _ResourceRepository.AddResources(resource);
+            var temp = await _ResourceRepository.AddResources(resource);
 
             using (var stream = System.IO.File.Create(resource.FilePath))
             {
                 file.CopyTo(stream);
             }
-            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
+            //ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
 
-            return CreatedAtRoute("GetResource",
-                new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
-                , resourceToReturn);
-            return Ok();
+            //return CreatedAtRoute("GetResource",
+            //    new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
+            //    , resourceToReturn);
+            return Ok(temp);
         }
 
         [HttpGet("{ResourceID}", Name = "GetResource")]
