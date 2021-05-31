@@ -140,7 +140,7 @@ namespace VirtualClassRoom.Controllers
             return Ok(studentsToReturn);
 
         }
-        [HttpPatch]
+        [HttpPatch("{courseId}")]
         public async Task<ActionResult> UpdateCourse(Guid courseId, JsonPatchDocument<CourseCreationDto> patchCourse)
         {
             string authHeader = Request.Headers["Authorization"];
@@ -195,7 +195,7 @@ namespace VirtualClassRoom.Controllers
             return Ok(coursesToReturn);
         }
         [HttpGet("studentCourses/{courseId}")]
-        public async Task<ActionResult<IEnumerable<CourseDto>>> GetStudentsEnrolledCourse(Guid courseId)
+        public async Task<ActionResult<CourseDto>> GetStudentsEnrolledCourse(Guid courseId)
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
@@ -213,7 +213,7 @@ namespace VirtualClassRoom.Controllers
                 return NotFound();
 
             }
-            var coursesToReturn = _mapper.Map<IEnumerable<CourseDto>>(courses);
+            var coursesToReturn = _mapper.Map<CourseDto>(courses);
 
             return Ok(coursesToReturn);
         }

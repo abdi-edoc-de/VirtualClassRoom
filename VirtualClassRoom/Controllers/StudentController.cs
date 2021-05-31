@@ -45,7 +45,7 @@ namespace VirtualClassRoom.Controllers
             string username = _accountService.Decrypt(authHeader);
             string[] token = username.Split(",");
             Guid id = Guid.Parse(token[0].Trim());
-            string role = token[1].Trim();
+            string role = token[1].Trim();  
 
             Student studentFromDb = await _studentRepository.GetStudent(id);
             if (studentFromDb == null)
