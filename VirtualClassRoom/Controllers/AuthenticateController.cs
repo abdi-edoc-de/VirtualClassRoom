@@ -48,21 +48,30 @@ namespace VirtualClassRoom.Controllers
             if (token.ElementAt(1) == "Student")
             {
                 var student =await _studentRepository.FindStudent(userCred.UserName, userCred.Password);
+                if (student == null)
+                {
+                    return NotFound();
+                }
                 UserAuthenticationDto studentToReturn = _mapper.Map<UserAuthenticationDto>(student);
                 studentToReturn.Token = token.ElementAt(0);
                 studentToReturn.Role = token.ElementAt(1);
                 return Ok(studentToReturn);
 
             }
-            else
+            else if(token.ElementAt(1)=="Instructor")
             {
 
                 var instructor =await _instructorRepository.FindInstructor(userCred.UserName, userCred.Password);
+                if (instructor == null)
+                {
+                    return NotFound();
+                }
                 UserAuthenticationDto instructorToReturn = _mapper.Map<UserAuthenticationDto>(instructor);
                 instructorToReturn.Token = token.ElementAt(0);
                 instructorToReturn.Role = token.ElementAt(1);
                 return Ok(instructorToReturn);
             }
+            return NotFound();
 
 
 

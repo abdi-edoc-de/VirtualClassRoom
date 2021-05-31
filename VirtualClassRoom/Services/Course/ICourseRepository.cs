@@ -18,6 +18,8 @@ namespace VirtualClassRoom.Services
         public Task<Course> DeleteCourse(Guid courseId);
         public Task<Course> UpdateCourse(Course course);
         public Task<Course> GetCourse(Guid courseId);
+        public Task<Course> GetCourse(Guid studentId,Guid courseId);
+
 
     }
 }

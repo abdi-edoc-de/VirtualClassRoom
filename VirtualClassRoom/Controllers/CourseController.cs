@@ -194,6 +194,29 @@ namespace VirtualClassRoom.Controllers
             
             return Ok(coursesToReturn);
         }
+        [HttpGet("studentCourses/{courseId}")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetStudentsEnrolledCourse(Guid courseId)
+        {
+            string authHeader = Request.Headers["Authorization"];
+            string username = _accountService.Decrypt(authHeader);
+            string[] token = username.Split(",");
+            Guid id = Guid.Parse(token[0]);
+            string role = token[1];
+            if (role != "Student")
+            {
+                return NotFound();
+            }
+            var courses = await _courseRepository.GetCourse(id,courseId);
+           
+            if (courses == null)
+            {
+                return NotFound();
+
+            }
+            var coursesToReturn = _mapper.Map<IEnumerable<CourseDto>>(courses);
+
+            return Ok(coursesToReturn);
+        }
         [HttpGet("instructorCourses")]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetInstructorscourse()
         {

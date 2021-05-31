@@ -9,6 +9,7 @@ namespace VirtualClassRoom.Models.Users
     public class UserCred
     {
         [Required]
+        [EmailAddress]
         public string UserName { get; set; }
         [Required]
         public string Password { get; set; }

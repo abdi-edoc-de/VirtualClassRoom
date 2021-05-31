@@ -14,13 +14,13 @@ namespace VirtualClassRoom.Profiles
     {
         public UserProfile()
         {
-            //CreateMap<Student, UserAuthenticationDto>()
-            //  .ForMember(
-            //  dest => dest.Name,
-            //  opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-            //  .ForMember(
-            //  dest => dest.Id,
-            //  opt => opt.MapFrom(src => src.StudentId));
+            CreateMap<Student, UserAuthenticationDto>()
+              .ForMember(
+              dest => dest.Name,
+              opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+              .ForMember(
+              dest => dest.Id,
+              opt => opt.MapFrom(src => src.StudentId));
 
             //CreateMap<Instructor, UserAuthenticationDto>()
             //  .ForMember(
@@ -29,7 +29,7 @@ namespace VirtualClassRoom.Profiles
             //  .ForMember(
             //  dest => dest.Id,
             //  opt => opt.MapFrom(src => src.InstructorId));
-            
+
 
             CreateMap<Student, UserDto>()
                 .ForMember(
@@ -64,10 +64,10 @@ namespace VirtualClassRoom.Profiles
             CreateMap<Instructor, UserAuthenticationDto>()
                 .ForMember(
                 dest => dest.Name,
-                opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"));
-                  // .ForMember(
-                //dest => dest.Id,
-               // opt => opt.MapFrom(src => src.InstructorId));
+                opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+                .ForMember(
+                dest => dest.Id,
+                opt => opt.MapFrom(src => src.InstructorId));
 
             CreateMap<UserUpdateDto, Student>();
             CreateMap<Student, UserUpdateDto>();
