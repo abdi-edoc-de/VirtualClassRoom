@@ -102,7 +102,8 @@ namespace VirtualClassRoom.Controllers
                                     studentToReturn);
 
         }
-        public async Task<ActionResult<CourseCreationDto>> AddStudents(Guid courseId, CourseStudentCreationDto courseStudents)
+        [HttpPost("student/{courseId}")]
+        public async Task<ActionResult<CourseCreationDto>> AddStudent(Guid courseId, CourseStudentCreationDto courseStudents)
         {
             var courseStudentsFromDb = _mapper.Map<CourseStudent>(courseStudents);
 
