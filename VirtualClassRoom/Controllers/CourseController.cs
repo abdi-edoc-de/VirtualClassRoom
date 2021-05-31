@@ -89,6 +89,7 @@ namespace VirtualClassRoom.Controllers
         public async Task<ActionResult<IEnumerable<UserDto>>> AddStudents(Guid courseId, IEnumerable<CourseStudentCreationDto> courseStudents)
         {
             var courseStudentsFromDb = _mapper.Map<IEnumerable<CourseStudent>>(courseStudents);
+            
             foreach (var courseStudent in courseStudentsFromDb)
             {
                 await _courseStudentRepository.AddStudentInCourse(courseStudent);

@@ -27,7 +27,7 @@ namespace VirtualClassRoom.Models.Course
                     "The Student Does not Eixist",
                     new[] { "UserBaseDto" });
             }
-            if (!_couresRepository.CourseExistNoneAsync(StudentId))
+            if (!_couresRepository.CourseExistNoneAsync(CourseId))
 
             {
                 yield return new ValidationResult(
