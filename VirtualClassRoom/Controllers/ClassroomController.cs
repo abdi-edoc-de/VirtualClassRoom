@@ -55,17 +55,12 @@ namespace VirtualClassRoom.Controllers
 
         [HttpPost]
         [Consumes("application/json")]
-        public async Task<ActionResult<ClassRoomDto>> PostVirtualClassroom(Guid courseId, [FromBody] ClassRoomUpdateDto classRoomDTO)
+        public async Task<ActionResult<ClassRoomCreationDto>> PostVirtualClassroom(Guid courseId, [FromBody] ClassRoomCreationDto classRoomDTO)
         {
-            ClassRoom classRoom = new ClassRoom
-            {
-                Url = Guid.NewGuid().ToString(),
-                CourseId = courseId,
-                ClassRoomName = classRoomDTO.ClassRoomName
-            };
+            var classRoom = _mapper.Map<ClassRoom>(classRoomDTO);
             var _ = await _ClassroomRepository.AddClassRoom(classRoom);
             var classRoomToReturn = _mapper.Map<ClassRoomDto>(classRoom);
-            return CreatedAtAction("GetClassRoom",
+            return CreatedAtRoute("GetClassRoom",
                              new { CourseId = courseId, ClassRoomId = classRoomToReturn.ClassRoomId },
                              classRoomToReturn);
         }

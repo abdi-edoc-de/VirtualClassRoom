@@ -38,10 +38,10 @@ namespace VirtualClassRoom.Profiles
                 .ForMember(
                 dest => dest.Id,
                 opt => opt.MapFrom(src => src.StudentId));
-            CreateMap<UserCreationDto, Student>();
-            // .ForMember(
-              //  dest => dest.Password,
-                //opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
+            CreateMap<UserCreationDto, Student>()
+             .ForMember(
+                dest => dest.Password,
+                opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
 
             CreateMap<Student, UserAuthenticationDto>()
                 .ForMember(

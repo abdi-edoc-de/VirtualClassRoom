@@ -253,7 +253,7 @@ namespace VirtualClassRoom.Controllers
 
             return Ok(coursesToReturn);
         }
-
+        //[HttpDelete("{courseId}/Student/{studentId")]
 
 
     }
