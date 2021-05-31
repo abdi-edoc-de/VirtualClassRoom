@@ -10,5 +10,6 @@ namespace VirtualClassRoom.Entities
     {
         [Required]
         public String ClassRoomName { get; set; }
+
     }
 }
