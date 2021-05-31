@@ -56,6 +56,27 @@ namespace VirtualClassRoom.Services.CourseStudents
             return await _appDbContext.Students.Where(s => studentIds.Contains(s.StudentId)).ToListAsync();
         }
 
+        public async Task<CourseStudent> RemoveStudentFromCourse(Guid studentId, Guid courseId)
+        {
+            if (courseId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+            if (studentId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(studentId));
+            }
+            var courseStudent = await _appDbContext.CourseStudents.FirstOrDefaultAsync(cs=>cs.CourseId==courseId && cs.StudentId==studentId);
+            if(courseStudent == null)
+            {
+                return null;
+            }
+             _appDbContext.Remove(courseStudent);
+            await _appDbContext.SaveChangesAsync();
+            return courseStudent;
+
+        }
+
         public bool StudentExistInCourse(Guid studentId, Guid courseId)
         {
             if (courseId == Guid.Empty)
