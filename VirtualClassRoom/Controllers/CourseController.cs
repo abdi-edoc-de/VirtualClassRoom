@@ -253,7 +253,18 @@ namespace VirtualClassRoom.Controllers
 
             return Ok(coursesToReturn);
         }
-        //[HttpDelete("{courseId}/Student/{studentId")]
+
+
+        [HttpDelete("{courseId}/Student/{studentId")]
+        public async Task<ActionResult> RemoveStudentFromCourse(Guid courseId,Guid studentId)
+        {
+            if(!  _courseStudentRepository.StudentExistInCourse(studentId,courseId))
+            {
+                return NotFound();
+            }
+            await _courseStudentRepository.RemoveStudentFromCourse(studentId,courseId);
+            return NoContent();
+        }
 
 
     }

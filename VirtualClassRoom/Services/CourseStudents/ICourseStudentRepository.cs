@@ -12,7 +12,7 @@ namespace VirtualClassRoom.Services.CourseStudents
         public Task<IEnumerable<Student>> GetStudents(Guid courseId);
         public Task<IEnumerable<Student>> GetStudents(IEnumerable<Guid> studentIds);
         public bool StudentExistInCourse(Guid studentIds,Guid courseId);
-        public bool Delet(Guid studentIds, Guid courseId);
+        public Task<CourseStudent> RemoveStudentFromCourse(Guid studentIds, Guid courseId);
 
 
     }
