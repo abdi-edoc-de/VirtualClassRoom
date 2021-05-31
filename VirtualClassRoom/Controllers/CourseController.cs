@@ -255,7 +255,7 @@ namespace VirtualClassRoom.Controllers
         }
 
 
-        [HttpDelete("{courseId}/Student/{studentId")]
+        [HttpDelete("{courseId}/Student/{studentId}")]
         public async Task<ActionResult> RemoveStudentFromCourse(Guid courseId,Guid studentId)
         {
             if(!  _courseStudentRepository.StudentExistInCourse(studentId,courseId))
