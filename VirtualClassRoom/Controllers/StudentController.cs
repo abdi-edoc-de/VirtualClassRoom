@@ -38,14 +38,14 @@ namespace VirtualClassRoom.Controllers
 
 
 
-        [HttpGet(Name = "GetStudentInfo")]
+        [HttpGet  ( Name = "GetStudentInfo")]
         public async Task<ActionResult<UserDto>> GetStudentInfo()
         {
             string authHeader = Request.Headers["Authorization"];
             string username = _accountService.Decrypt(authHeader);
             string[] token = username.Split(",");
             Guid id = Guid.Parse(token[0].Trim());
-            string role = token[1].Trim();
+            string role = token[1].Trim();  
 
             Student studentFromDb = await _studentRepository.GetStudent(id);
             if (studentFromDb == null)
@@ -106,7 +106,45 @@ namespace VirtualClassRoom.Controllers
             return Ok(studentToReturn);
         }
 
-        
+        [HttpGet("StudentByEmail")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetStudentInfoByEmail(IEnumerable<UserEmailDto> emails )
+        {
+
+            if (emails == null)
+            {
+                return NotFound();
+            }
+
+            IEnumerable<string> listOfEmails = emails.Select(e => e.Email);
+            var studentFromDb = await _studentRepository.GetStudentByEmail(listOfEmails);
+            if (studentFromDb == null)
+            {
+                return NotFound();
+            }
+            var studentToReturn = _mapper.Map<IEnumerable<UserDto>>(studentFromDb);
+            return Ok(studentToReturn);
+
+        }
+        [HttpGet("StudentEmail/{studentEmail}")]
+        public async Task<ActionResult<UserDto>> GetOneStudentInfoByEmail(string studentEmail)
+        {
+
+            if (string.IsNullOrWhiteSpace(studentEmail))
+            {
+                return NotFound();
+            }
+
+            studentEmail = studentEmail.Trim();
+            var studentFromDb = await _studentRepository.GetStudentByEmail(studentEmail);
+            if (studentFromDb == null)
+            {
+                return NotFound();
+            }
+            var studentToReturn = _mapper.Map<UserDto>(studentFromDb);
+            return Ok(studentToReturn);
+
+        }
+
 
 
     }

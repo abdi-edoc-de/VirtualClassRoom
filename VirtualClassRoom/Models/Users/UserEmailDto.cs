@@ -4,11 +4,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VirtualClassRoom.Entities
+namespace VirtualClassRoom.Models.Users
 {
-    public class ClassRoomUpdateDto
+    public class UserEmailDto
     {
         [Required]
-        public String ClassRoomName { get; set; }
+        [EmailAddress]
+        public String Email { get; set; }
     }
 }

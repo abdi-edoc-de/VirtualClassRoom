@@ -14,13 +14,13 @@ namespace VirtualClassRoom.Profiles
     {
         public UserProfile()
         {
-            //CreateMap<Student, UserAuthenticationDto>()
-            //  .ForMember(
-            //  dest => dest.Name,
-            //  opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
-            //  .ForMember(
-            //  dest => dest.Id,
-            //  opt => opt.MapFrom(src => src.StudentId));
+            CreateMap<Student, UserAuthenticationDto>()
+              .ForMember(
+              dest => dest.Name,
+              opt => opt.MapFrom(src => $"{src.FirstName} {src.LastName}"))
+              .ForMember(
+              dest => dest.Id,
+              opt => opt.MapFrom(src => src.StudentId));
 
             //CreateMap<Instructor, UserAuthenticationDto>()
             //  .ForMember(
@@ -29,7 +29,7 @@ namespace VirtualClassRoom.Profiles
             //  .ForMember(
             //  dest => dest.Id,
             //  opt => opt.MapFrom(src => src.InstructorId));
-            
+
 
             CreateMap<Student, UserDto>()
                 .ForMember(
@@ -39,9 +39,10 @@ namespace VirtualClassRoom.Profiles
                 dest => dest.Id,
                 opt => opt.MapFrom(src => src.StudentId));
             CreateMap<UserCreationDto, Student>()
-                .ForMember(
+             .ForMember(
                 dest => dest.Password,
                 opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
+
             CreateMap<Student, UserAuthenticationDto>()
                 .ForMember(
                 dest => dest.Name,
@@ -67,6 +68,7 @@ namespace VirtualClassRoom.Profiles
                 .ForMember(
                 dest => dest.Id,
                 opt => opt.MapFrom(src => src.InstructorId));
+
             CreateMap<UserUpdateDto, Student>();
             CreateMap<Student, UserUpdateDto>();
             CreateMap<UserUpdateDto, Instructor>();

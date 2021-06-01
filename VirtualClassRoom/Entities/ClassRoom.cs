@@ -18,6 +18,13 @@ namespace VirtualClassRoom.Entities
         public String ClassRoomName { get; set; }
 
         // TODO: Add start datetime to the model
+        [Required]
+        public DateTime Date { get; set; }
+
+        [Required]
+        public TimeSpan StartTime { get; set; }
+        [Required]
+        public TimeSpan EndTime { get; set; }
 
         [Required]
         public String Url { get; set; }

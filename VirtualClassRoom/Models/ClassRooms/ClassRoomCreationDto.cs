@@ -5,13 +5,16 @@ using System.Threading.Tasks;
 
 namespace VirtualClassRoom.Models.ClassRooms
 {
-    public class ClassRoomDto
+    public class ClassRoomCreationDto
     {
-        public Guid ClassRoomId { get; set; }
+
 
         public String ClassRoomName { get; set; }
+        public string Date { get; set; }
+
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
 
         public Guid CourseId { get; set; }
-
     }
 }

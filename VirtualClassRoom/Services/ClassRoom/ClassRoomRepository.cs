@@ -41,6 +41,22 @@ namespace VirtualClassRoom.Services
             return await _appDbContext.ClassRooms.AnyAsync(s => s.ClassRoomId == classRoomId);
         }
 
+        public async Task<ClassRoom> DeleteClassRoom(Guid classRoomId)
+        {
+            if(classRoomId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(classRoomId));
+            }
+            var classRoom = await _appDbContext.ClassRooms.FirstOrDefaultAsync(cr=>cr.ClassRoomId==classRoomId);
+            if(classRoom == null)
+            {
+                return null;
+            }
+            _appDbContext.ClassRooms.Remove(classRoom);
+            await _appDbContext.SaveChangesAsync();
+            return classRoom;
+        }
+
         public async Task<IEnumerable<ClassRoom>> GetCourseClassRooms(Guid courseId)
         {
             if (courseId == Guid.Empty)

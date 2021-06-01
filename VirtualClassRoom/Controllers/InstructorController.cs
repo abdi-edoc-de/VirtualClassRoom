@@ -58,8 +58,8 @@ namespace VirtualClassRoom.Controllers
         public async Task<ActionResult<UserDto>> CreateInstructor([FromBody] UserCreationDto instructor)
         {
             Instructor instructorEntity = _mapper.Map<Instructor>(instructor);
-            var _ = await _instructorRepository.AddInstructor(instructorEntity);
-            UserDto instructorToReturn = _mapper.Map<UserDto>(instructorEntity);
+            var temp = await _instructorRepository.AddInstructor(instructorEntity);
+            UserDto instructorToReturn = _mapper.Map<UserDto>(temp);
             return CreatedAtRoute("GetInstructorInformation", new { instructorId = instructorToReturn.Id },
                 instructorToReturn);
         }

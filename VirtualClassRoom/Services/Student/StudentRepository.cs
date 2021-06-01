@@ -128,5 +128,17 @@ namespace VirtualClassRoom.Services
             }
             return _appDbContext.Students.Any(s => s.StudentId == studentId);
         }
+
+        public async Task<IEnumerable<Student>> GetStudentByEmail(IEnumerable<string> emails)
+        {
+            foreach(var email in emails)
+            {
+                if (string.IsNullOrWhiteSpace(email))
+                {
+                    throw new ArgumentNullException(nameof(email));
+                }
+            }
+            return await _appDbContext.Students.Where(s => emails.Contains(s.Email)).ToListAsync();
+        }
     }
 }

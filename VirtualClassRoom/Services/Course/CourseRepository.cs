@@ -123,5 +123,27 @@ namespace VirtualClassRoom.Services
             }
             return _appDbContext.Courses.Any(s => s.CourseId == courseId);
         }
+
+        public async Task<Course> GetCourse(Guid studentId, Guid courseId)
+        {
+            if (studentId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(studentId));
+            }
+            if (courseId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(courseId));
+            }
+
+            var courseeStudent =await _appDbContext.CourseStudents.FirstOrDefaultAsync(cs => cs.StudentId == studentId && cs.CourseId == courseId);
+            if (courseeStudent == null)
+            {
+                throw new ArgumentNullException(nameof(CourseStudent));
+
+            }
+       
+            var course = await _appDbContext.Courses.FirstOrDefaultAsync(c => c.CourseId==courseeStudent.CourseId);
+            return course;
+        }
     }
 }

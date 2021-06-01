@@ -20,6 +20,8 @@ namespace VirtualClassRoom.Services
         public Task<Student> DeleteStudent(Guid studentId);
         public Task<bool> StudentExist(Guid studentId);
         public Task<Student> GetStudentByEmail(string email);
+        public Task<IEnumerable<Student>> GetStudentByEmail(IEnumerable<string> email);
+
         public bool StudentExistByEmail(string email);
         public bool StudentExistNoneAsync(Guid studentId);
 

@@ -23,7 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\ClassRooms\" />
     <Folder Include="Models\Instrucotr\" />
     <Folder Include="Models\Student\" />
   </ItemGroup>
