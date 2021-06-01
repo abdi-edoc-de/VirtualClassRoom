@@ -15,7 +15,6 @@ namespace VirtualClassRoom.Controllers
 {
     [Authorize]
     [Route("api/Courses/{courseId}/Resources")]
-    [Consumes("application/octet-stream", "multipart/form-data")]
     [ApiController]
     public class ResourceController : ControllerBase
     {
@@ -32,7 +31,6 @@ namespace VirtualClassRoom.Controllers
 
 
         [HttpGet]
-        //[Route("api/Courses/{courseId}/Resources")]
         public async Task<ActionResult<IEnumerable<ResourceDto>>> GetResourcesForCourse(Guid courseId)
         {
             IEnumerable<Resource> resources = await _ResourceRepository.GetResources(courseId);
@@ -40,14 +38,18 @@ namespace VirtualClassRoom.Controllers
             {
                 return NotFound();
             }
-            IEnumerable<ResourceDto> resourceToReturn = _mapper.Map<IEnumerable<ResourceDto>>(resources);
-            return Ok(resourceToReturn);
+            //IEnumerable<ResourceDto> resourceToReturn = _mapper.Map<IEnumerable<ResourceDto>>(resources);
+            return Ok(resources);
         }
 
         [HttpPost]
+        [Consumes("multipart/form-data")]
         public async Task<ActionResult<ResourceDto>> PostResource(Guid courseId, IFormFile file)
         {
-
+            if (file == null)
+            {
+                return BadRequest("Make sure you have the file named file in form");
+            }
             Resource resource = new Resource
             {
                 FileName = file.FileName,
@@ -55,18 +57,17 @@ namespace VirtualClassRoom.Controllers
                 CourseId = courseId,
             };
 
-            var temp = await _ResourceRepository.AddResources(resource);
+            await _ResourceRepository.AddResources(resource);
 
             using (var stream = System.IO.File.Create(resource.FilePath))
             {
                 file.CopyTo(stream);
             }
             //ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
-
-            //return CreatedAtRoute("GetResource",
-            //    new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
-            //    , resourceToReturn);
-            return Ok(temp);
+            // TODO: Change this to DTO style
+            return CreatedAtRoute("GetResource",
+                new { courseId = courseId, ResourceId = resource.ResourceId }
+                , resource);
         }
 
         [HttpGet("{ResourceID}", Name = "GetResource")]
@@ -79,8 +80,8 @@ namespace VirtualClassRoom.Controllers
             {
                 return NotFound();
             }
-            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
-            return Ok(resourceToReturn);
+            // TODO: Change this to DTO style
+            return Ok(resource);
         }
 
         [HttpDelete("{ResourceID}")]
