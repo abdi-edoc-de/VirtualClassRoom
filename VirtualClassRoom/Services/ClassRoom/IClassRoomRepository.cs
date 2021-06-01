@@ -14,6 +14,8 @@ namespace VirtualClassRoom.Services
         public Task<ClassRoom> UpdateVirualClassRoom(Guid virtualRoomId, ClassRoom virtualClassRoom);
         public Task<IEnumerable<ClassRoom>> GetCourseClassRooms(Guid courseId);
         public Task<ClassRoom> AddClassRoom(ClassRoom classRoom);
+        public Task<ClassRoom> DeleteClassRoom(Guid classRoomId);
+
 
     }
 }
