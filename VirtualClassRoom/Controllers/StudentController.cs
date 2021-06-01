@@ -38,7 +38,7 @@ namespace VirtualClassRoom.Controllers
 
 
 
-        [HttpGet(Name = "GetStudentInfo")]
+        [HttpGet  ( Name = "GetStudentInfo")]
         public async Task<ActionResult<UserDto>> GetStudentInfo()
         {
             string authHeader = Request.Headers["Authorization"];
