@@ -84,5 +84,15 @@ namespace VirtualClassRoom.Controllers
             var _ = await _ClassroomRepository.UpdateVirualClassRoom(ClassroomID, classroom);
             return Accepted();
         }
+        [HttpDelete("{ClassroomID}")]
+        public async Task<ActionResult> DeleteClassRoom(Guid ClassroomID)
+        {
+            var classroom = await _ClassroomRepository.DeleteClassRoom(ClassroomID);
+            if (classroom == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
     }
 }
