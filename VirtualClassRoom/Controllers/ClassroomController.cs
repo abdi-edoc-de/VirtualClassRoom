@@ -13,7 +13,7 @@ using VirtualClassRoom.Models.ClassRooms;
 namespace VirtualClassRoom.Controllers
 {
     [Authorize]
-    [Route("api/Courses/{courseId}/Classrooms")]
+    [Route("api/Course/{courseId}/Classrooms")]
     [ApiController]
     public class ClassroomController : ControllerBase
     {
@@ -54,10 +54,13 @@ namespace VirtualClassRoom.Controllers
         }
 
         [HttpPost]
-        [Consumes("application/json")]
+        //[Consumes("application/json")]
         public async Task<ActionResult<ClassRoomCreationDto>> PostVirtualClassroom(Guid courseId, [FromBody] ClassRoomCreationDto classRoomDTO)
         {
+
+           
             var classRoom = _mapper.Map<ClassRoom>(classRoomDTO);
+            classRoom.Url = Guid.NewGuid().ToString();
             var _ = await _ClassroomRepository.AddClassRoom(classRoom);
             var classRoomToReturn = _mapper.Map<ClassRoomDto>(classRoom);
             return CreatedAtRoute("GetClassRoom",
