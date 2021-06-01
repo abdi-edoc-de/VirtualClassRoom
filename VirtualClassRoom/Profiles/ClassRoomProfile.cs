@@ -28,7 +28,10 @@ namespace VirtualClassRoom.Profiles
                 opt => opt.MapFrom(src => TimeSpan.Parse(src.StartTime)))
                  .ForMember(
                 dest => dest.EndTime,
-                opt => opt.MapFrom(src => TimeSpan.Parse(src.EndTime)));
+                opt => opt.MapFrom(src => TimeSpan.Parse(src.EndTime)))
+                  .ForMember(
+                dest => dest.Date,
+                opt => opt.MapFrom(src => Convert.ToDateTime(src.Date)));
         }
     }
 }
