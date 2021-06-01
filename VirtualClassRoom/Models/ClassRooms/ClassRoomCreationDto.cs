@@ -8,7 +8,6 @@ namespace VirtualClassRoom.Models.ClassRooms
     public class ClassRoomCreationDto
     {
 
-        public Guid ClassRoomId { get; set; }
 
         public String ClassRoomName { get; set; }
         public DateTime Date { get; set; }
