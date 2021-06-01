@@ -150,7 +150,7 @@ namespace VirtualClassRoom
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
-                    builder => builder.WithOrigins("http://localhost:5500", "http://127.0.0.1:5500")
+                    builder => builder.WithOrigins("http://localhost:5500", "http://localhost:3000")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
