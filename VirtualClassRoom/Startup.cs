@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using VirtualClassRoom.DbContexts;
 //using VirtualClassRoom.Entities;
 using VirtualClassRoom.Services;
+using VirtualClassRoom.Services.ClassRoomStudents;
 using VirtualClassRoom.Services.CourseStudents;
 using VirtualClassRoom.SignalRTC;
 
@@ -118,6 +119,8 @@ namespace VirtualClassRoom
             services.AddScoped<IInstructorRepository, InstructorRepository>();
             services.AddScoped<IResourceRepository, ResourceRepository>();
             services.AddScoped<IClassRoomRepository, ClassRoomRepository>();
+            services.AddScoped<IClassRoomStudentRepository, ClassRoomStudentRepsitory>();
+
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             var tokenKey = Configuration.GetValue<string>("TokenKey");
@@ -187,7 +190,7 @@ namespace VirtualClassRoom
             {
                 endpoints.MapControllers();
 
-                endpoints.MapHub<SignalRtcHub>("/signalrtc");
+                endpoints.MapHub<SignalRtcHub>("/p/Courses/{courseId}/Classrooms/{ClassroomID}/join");
             });
 
             app.Run(async (context) =>
