@@ -9,7 +9,7 @@ namespace VirtualClassRoom.Services.ClassRoomStudents
     public interface IClassRoomStudentRepository
     {
         public Task<ClassRoomStudent> AddClassRoomStudent(ClassRoomStudent classRoomStudent);
-        //public Task<IEnumerable<Student>> Get(Guid classRoomId);
+        public Task<IEnumerable<Student>> GetAttendance(Guid classRoomId);
         public Task<bool> ExistStudentInClassRoom(Guid studentid,Guid classRoomId);
 
 
