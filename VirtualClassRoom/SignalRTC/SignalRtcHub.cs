@@ -41,15 +41,20 @@ namespace VirtualClassRoom.SignalRTC
             string role = token[1].Trim();
 
             // Todo make sure this works
-            var alreadyAdded = await _classRoomStudentRepository.ExistStudentInClassRoom(id, Guid.Parse(groupName));
-            if (!alreadyAdded)
+            if (role != "Instructor")
             {
-                await _classRoomStudentRepository.AddClassRoomStudent(new Entities.ClassRoomStudent()
+                var alreadyAdded = await _classRoomStudentRepository.ExistStudentInClassRoom(id, Guid.Parse(groupName));
+                if (!alreadyAdded)
                 {
-                    StudentId = id,
-                    ClassRoomId = Guid.Parse(groupName)
-                });
+                    Console.WriteLine(id);
+                    await _classRoomStudentRepository.AddClassRoomStudent(new Entities.ClassRoomStudent()
+                    {
+                        StudentId = id,
+                        ClassRoomId = Guid.Parse(groupName)
+                    });
+                }
             }
+            
 
             UserInfo newUser = await GetUserInfo(id, role, userCallID);
             groupInformation.TryGetValue(groupName, out var classInfo);
