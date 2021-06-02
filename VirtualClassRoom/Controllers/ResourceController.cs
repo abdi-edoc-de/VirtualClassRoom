@@ -94,7 +94,7 @@ namespace VirtualClassRoom.Controllers
                 return NotFound();
             }
             System.IO.File.Delete(resource.FilePath);
-            var _ = _ResourceRepository.DeleteResource(ResourceID);
+            var _ = await _ResourceRepository.DeleteResource(ResourceID);
             return Accepted();
         }
 
