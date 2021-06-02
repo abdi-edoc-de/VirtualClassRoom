@@ -15,7 +15,6 @@ namespace VirtualClassRoom.Controllers
 {
     [Authorize]
     [Route("api/Courses/{courseId}/Resources")]
-    [Consumes("application/octet-stream", "multipart/form-data")]
     [ApiController]
     public class ResourceController : ControllerBase
     {
@@ -32,7 +31,6 @@ namespace VirtualClassRoom.Controllers
 
 
         [HttpGet]
-        //[Route("api/Courses/{courseId}/Resources")]
         public async Task<ActionResult<IEnumerable<ResourceDto>>> GetResourcesForCourse(Guid courseId)
         {
             IEnumerable<Resource> resources = await _ResourceRepository.GetResources(courseId);
@@ -61,12 +59,11 @@ namespace VirtualClassRoom.Controllers
             {
                 file.CopyTo(stream);
             }
-            //ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
+            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
 
-            //return CreatedAtRoute("GetResource",
-            //    new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
-            //    , resourceToReturn);
-            return Ok(temp);
+            return CreatedAtRoute("GetResource",
+                new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
+                , resourceToReturn);
         }
 
         [HttpGet("{ResourceID}", Name = "GetResource")]

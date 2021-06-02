@@ -42,7 +42,8 @@ namespace VirtualClassRoom
         {
             services.AddSwaggerGen();
 
-            
+
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
             services.AddControllers(setUpAction =>
@@ -122,7 +123,6 @@ namespace VirtualClassRoom
             services.AddScoped<IClassRoomStudentRepository, ClassRoomStudentRepsitory>();
 
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             var tokenKey = Configuration.GetValue<string>("TokenKey");
             var key = "this is my custom Secret key for authnetication";
 

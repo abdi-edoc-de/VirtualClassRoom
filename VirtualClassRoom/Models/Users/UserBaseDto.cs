@@ -30,7 +30,7 @@ namespace VirtualClassRoom.Models.Users
             {
                 yield return new ValidationResult(
                     "The Email is Taken",
-                    new[] { "UserBaseDto" });
+                    new[] { "Email" });
             }
         }
     }
