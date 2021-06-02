@@ -22,8 +22,6 @@ namespace VirtualClassRoom.SignalRTC
         static ConcurrentDictionary<string, string> groupDictionary = new ConcurrentDictionary<string, string>();
         // holds the groupID to Classroom info mapping
         static ConcurrentDictionary<string, ClassroomInfo> groupInformation = new ConcurrentDictionary<string, ClassroomInfo>();
-        // holds the callID to participants mapping for multiscreen sharing
-        static ConcurrentDictionary<string, IEnumerable<string>> participantList = new ConcurrentDictionary<string, IEnumerable<string>>();
 
         public SignalRtcHub(IAccountService accountService, IStudentRepository studentRepository, IInstructorRepository instructorRepository)
         {
