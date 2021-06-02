@@ -9,6 +9,8 @@ using VirtualClassRoom.Entities;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using VirtualClassRoom.Models.ClassRooms;
+using VirtualClassRoom.Services.ClassRoomStudents;
+using VirtualClassRoom.Models;
 
 namespace VirtualClassRoom.Controllers
 {
@@ -19,11 +21,14 @@ namespace VirtualClassRoom.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IClassRoomRepository _ClassroomRepository;
+        private readonly IClassRoomStudentRepository _classRoomStudentRepository;
 
-        public ClassroomController(IClassRoomRepository classRoomRepository, IMapper mapper)
+        public ClassroomController(IClassRoomRepository classRoomRepository,
+            IClassRoomStudentRepository classRoomStudentRepository , IMapper mapper)
         {
             _mapper = mapper;
             _ClassroomRepository = classRoomRepository;
+            _classRoomStudentRepository = classRoomStudentRepository;
         }
 
         [HttpGet("{ClassroomID}", Name = "GetClassRoom")]
@@ -96,6 +101,19 @@ namespace VirtualClassRoom.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+        [HttpGet("{ClassroomID}/attendance")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> Attendance(Guid ClassroomID)
+        {
+            var students =await  _classRoomStudentRepository.GetAttendance(ClassroomID);
+            if (students == null)
+            {
+                return NotFound();
+            }
+            var studentsToReturn = _mapper.Map<UserDto>(students);
+
+            return Ok(studentsToReturn);
+
         }
     }
 }
