@@ -63,11 +63,11 @@ namespace VirtualClassRoom.Controllers
             {
                 file.CopyTo(stream);
             }
-            //ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
-            // TODO: Change this to DTO style
+            ResourceDto resourceToReturn = _mapper.Map<ResourceDto>(resource);
+
             return CreatedAtRoute("GetResource",
-                new { courseId = courseId, ResourceId = resource.ResourceId }
-                , resource);
+                new { courseId = courseId, ResourceId = resourceToReturn.ResourceId }
+                , resourceToReturn);
         }
 
         [HttpGet("{ResourceID}", Name = "GetResource")]

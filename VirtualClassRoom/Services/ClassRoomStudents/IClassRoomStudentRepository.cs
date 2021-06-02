@@ -8,6 +8,8 @@ namespace VirtualClassRoom.Services.ClassRoomStudents
 {
     public interface IClassRoomStudentRepository
     {
-        public Task<ClassRoomStudent> AddClassRoomStudent(ClassRoomStudent classRoomStudent); 
+        public Task<ClassRoomStudent> AddClassRoomStudent(ClassRoomStudent classRoomStudent);
+        public Task<IEnumerable<Student>> AddClassRoomStudent(Guid classRoomId);
+
     }
 }

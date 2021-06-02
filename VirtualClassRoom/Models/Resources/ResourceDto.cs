@@ -8,7 +8,6 @@ namespace VirtualClassRoom.Models.Resources
     public class ResourceDto
     {
         public Guid ResourceId { get; set; }
-        public String FilePath { get; set; }
         public String FileName { get; set; }
         
         public Guid CourseId { get; set; }
