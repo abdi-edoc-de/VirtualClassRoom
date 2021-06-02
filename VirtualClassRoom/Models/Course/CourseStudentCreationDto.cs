@@ -28,21 +28,21 @@ namespace VirtualClassRoom.Models.Course
             {
                 yield return new ValidationResult(
                     "The Student Does not Eixist",
-                    new[] { "UserBaseDto" });
+                    new[] { "student" });
             }
             if (!_couresRepository.CourseExistNoneAsync(CourseId))
 
             {
                 yield return new ValidationResult(
                     "The Course Does not Eixist",
-                    new[] { "UserBaseDto" });
+                    new[] { "course" });
             }
             if (_courseStudentRepository.StudentExistInCourse(StudentId,CourseId))
 
             {
                 yield return new ValidationResult(
                     "The Student Already Eixist in the course",
-                    new[] { "UserBaseDto" });
+                    new[] { "studentInCourse" });
             }
         }
 

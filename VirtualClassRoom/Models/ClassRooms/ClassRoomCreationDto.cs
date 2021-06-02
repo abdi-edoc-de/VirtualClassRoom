@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VirtualClassRoom.Models.ClassRooms
 {
-    public class ClassRoomCreationDto
+    public class ClassRoomCreationDto : IValidatableObject
     {
 
         [Required]
@@ -22,5 +22,17 @@ namespace VirtualClassRoom.Models.ClassRooms
         [Required]
 
         public Guid CourseId { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+
+            DateTime now = DateTime.UtcNow;
+            if (Convert.ToDateTime(Date)<now)
+            {
+                yield return new ValidationResult(
+                    "The Date must be in future or now",
+                    new[] { "Date" });
+            }
+        }
     }
 }
