@@ -27,5 +27,31 @@ namespace VirtualClassRoom.Services.ClassRoomStudents
             await _appDbContext.SaveChangesAsync();
             return classRoomStudent;
         }
+
+        //public async Task<IEnumerable<Student>> AddClassRoomStudent(Guid classRoomId)
+        //{
+        //    if(classRoomId == Guid.Empty)
+        //    {
+
+
+        //    }
+        //}
+
+        public async Task<bool> ExistStudentInClassRoom(Guid studentId, Guid classRoomId)
+        {
+            if (classRoomId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(classRoomId));
+
+
+            }
+            if (studentId == Guid.Empty)
+            {
+                throw new ArgumentNullException(nameof(studentId));
+
+            }
+            return await _appDbContext.ClassRoomStudents.AnyAsync(crs=>crs.ClassRoomId==classRoomId && crs.StudentId==studentId);
+
+        }
     }
 }
