@@ -140,5 +140,22 @@ namespace VirtualClassRoom.Services
             }
             return await _appDbContext.Students.Where(s => emails.Contains(s.Email)).ToListAsync();
         }
+
+        public Student FindStudentNonAsync(string email, string password)
+        {
+            if (String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException(nameof(email));
+            }
+            email = email.Trim();
+            password = password.Trim();
+            var student =  _appDbContext.Students.FirstOrDefault(s => s.Email == email);
+            if (student != null && BCrypt.Net.BCrypt.Verify(password, student.Password))
+            {
+                return student;
+            }
+            return null;
+
+        }
     }
 }
