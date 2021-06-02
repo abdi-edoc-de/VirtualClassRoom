@@ -11,6 +11,8 @@ namespace VirtualClassRoom.Services
         public Task<bool> InstrucotrExist(Guid instructorId);
 
         public Task<Instructor> FindInstructor(string email, string password);
+        public Instructor FindInstructorNonAsync(string email, string password);
+
         public Task<Instructor> GetInstructor(Guid instructorId);
         public Task<Instructor> UpdateInstructor(Instructor instructor);
         public Task<Instructor> AddInstructor(Instructor instructor);

@@ -14,6 +14,8 @@ namespace VirtualClassRoom.Services
     {
         //IEnumerable<>
         public Task<Student> FindStudent(String email, String password);
+        public Student FindStudentNonAsync(String email, String password);
+
         public Task<Student> GetStudent(Guid studentId);
         public Task<Student> UpdateStudent(Guid studentId, Student student);
         public Task<Student> AddStudent(Student student);

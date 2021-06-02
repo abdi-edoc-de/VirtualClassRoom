@@ -117,5 +117,21 @@ namespace VirtualClassRoom.Services
             email = email.Trim();
             return  _appDbContext.Instructors.Any(s => s.Email == email);
         }
+
+        public Instructor FindInstructorNonAsync(string email, string password)
+        {
+            if (String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException(nameof(email));
+            }
+            email = email.Trim();
+            password = password.Trim();
+            Instructor instructor = _appDbContext.Instructors.FirstOrDefault(s => s.Email == email);
+            if (instructor != null && BCrypt.Net.BCrypt.Verify(password, instructor.Password))
+            {
+                return instructor;
+            }
+            return null;
+        }
     }
 }
