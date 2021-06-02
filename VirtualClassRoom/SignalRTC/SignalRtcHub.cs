@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using VirtualClassRoom.Services;
+using VirtualClassRoom.Services.ClassRoomStudents;
 
 namespace VirtualClassRoom.SignalRTC
 {
@@ -14,6 +15,7 @@ namespace VirtualClassRoom.SignalRTC
         private readonly IAccountService _accountService;
         private readonly IStudentRepository _studentRepository;
         private readonly IInstructorRepository _instructorRepository;
+        private readonly IClassRoomStudentRepository _classRoomStudentRepository;
         
 
         // holds the connectionID to callID mapping
@@ -23,8 +25,9 @@ namespace VirtualClassRoom.SignalRTC
         // holds the groupID to Classroom info mapping
         static ConcurrentDictionary<string, ClassroomInfo> groupInformation = new ConcurrentDictionary<string, ClassroomInfo>();
 
-        public SignalRtcHub(IAccountService accountService, IStudentRepository studentRepository, IInstructorRepository instructorRepository)
+        public SignalRtcHub(IAccountService accountService, IStudentRepository studentRepository, IInstructorRepository instructorRepository, IClassRoomStudentRepository classRoomStudentRepository)
         {
+            _classRoomStudentRepository = classRoomStudentRepository;
             _accountService = accountService;
             _studentRepository = studentRepository;
             _instructorRepository = instructorRepository;
@@ -36,6 +39,17 @@ namespace VirtualClassRoom.SignalRTC
             string[] token = username.Split(",");
             Guid id = Guid.Parse(token[0].Trim());
             string role = token[1].Trim();
+
+            // Todo make sure this works
+            var alreadyAdded = await _classRoomStudentRepository.ExistStudentInClassRoom(id, Guid.Parse(groupName));
+            if (!alreadyAdded)
+            {
+                await _classRoomStudentRepository.AddClassRoomStudent(new Entities.ClassRoomStudent()
+                {
+                    StudentId = id,
+                    ClassRoomId = Guid.Parse(groupName)
+                });
+            }
 
             UserInfo newUser = await GetUserInfo(id, role, userCallID);
             groupInformation.TryGetValue(groupName, out var classInfo);
