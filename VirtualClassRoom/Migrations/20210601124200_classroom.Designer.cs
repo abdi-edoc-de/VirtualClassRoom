@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VirtualClassRoom.DbContexts;
 
 namespace VirtualClassRoom.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210601124200_classroom")]
+    partial class classroom
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -211,7 +213,7 @@ namespace VirtualClassRoom.Migrations
                             Email = "nti@gmail.com",
                             FirstName = "Nati",
                             LastName = "Beak",
-                            Password = "$2a$11$7kKkmP7V3SN7xVImf7OGheL/6ReCwqoaaTtBsEHp.9rrQtQPGz12."
+                            Password = "$2a$11$VFHL6K63UG3HVrwqZ/Vcs.sxa4bltXnwBNjKqiXuzAppErLplnk/y"
                         },
                         new
                         {
@@ -219,7 +221,7 @@ namespace VirtualClassRoom.Migrations
                             Email = "Aman@gmail.com",
                             FirstName = "Aman",
                             LastName = "Debe",
-                            Password = "$2a$11$fLhJF7/0Og/u6mJhsWL8UeRs6C37raNwxk9j8AvfoX6iFBnUtX15G"
+                            Password = "$2a$11$/QdVtUAKSPxpQ16N99G4Auu0DPkJuDqnVWMaLvpBSpEl..Sk4PivG"
                         },
                         new
                         {
@@ -227,7 +229,7 @@ namespace VirtualClassRoom.Migrations
                             Email = "Kidus@gmail.com",
                             FirstName = "Kidus",
                             LastName = "Beak",
-                            Password = "$2a$11$sqGQJqD3JdNDojp8gdi/qedZ5JCoTmbN24h4rhYpf44hszq11Nkga"
+                            Password = "$2a$11$bRbr9l84KKqnrd4m6ZjBV.YGEoL95zjhbBfY0QVWW8/6WCevVTLh6"
                         },
                         new
                         {
@@ -235,7 +237,7 @@ namespace VirtualClassRoom.Migrations
                             Email = "biruk@gmail.com",
                             FirstName = "Biruk",
                             LastName = "Beak",
-                            Password = "$2a$11$cuji4rj1/7EfIcRI4LpsneM7t/C5nbHt8ck4kxfLHgHJNm7pV4Ziq"
+                            Password = "$2a$11$70jCllPZ5QkjqZBfOO.5ee8WUYsO0AisBclC3t87OoufOAzm6ZW96"
                         });
                 });
 
@@ -312,7 +314,7 @@ namespace VirtualClassRoom.Migrations
                             Email = "hanan@gmail.com",
                             FirstName = "Hanan",
                             LastName = "Debe",
-                            Password = "$2a$11$dhRtqgIIy0oNvdmQXcwJ4ucGfJgL4Vj8wsW7/Q2XeNnIIIdpMQ2v2"
+                            Password = "$2a$11$.kkvx941mM6bd73LiiaOOeX6D879oDnmu54XDG5lFM2.fDCb15R9y"
                         },
                         new
                         {
@@ -328,7 +330,7 @@ namespace VirtualClassRoom.Migrations
                             Email = "beki@gmail.com",
                             FirstName = "Beki",
                             LastName = "Beak",
-                            Password = "$2a$11$TVsfOm5nFmULA44pDi.oTe1eEJzgEOdift0QB9yVLewwO5n6nrclq"
+                            Password = "$2a$11$q4GMN9lmtiVvy60nE9MLEeiqGdv12xFiz6qB4WntU8CbykZWswIK2"
                         });
                 });
 

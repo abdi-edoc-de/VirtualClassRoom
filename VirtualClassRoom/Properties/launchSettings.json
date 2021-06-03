@@ -20,7 +20,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "http://10.6.197.98:51044"
+      "applicationUrl": "http://localhost:51044"
     },
     "VirtualClassRoom": {
       "commandName": "Project",
