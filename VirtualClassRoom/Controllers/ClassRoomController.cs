@@ -110,7 +110,7 @@ namespace VirtualClassRoom.Controllers
             {
                 return NotFound();
             }
-            var studentsToReturn = _mapper.Map<UserDto>(students);
+            var studentsToReturn = _mapper.Map<IEnumerable<UserDto>>(students);
 
             return Ok(studentsToReturn);
 
